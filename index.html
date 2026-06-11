@@ -25,7 +25,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
-        /* همان CSS کامل قبلی */
         :root {
             --bg: #fbfaf7;
             --bg2: #fff;
@@ -472,11 +471,10 @@
                 <button class="btn" id="saveSettings"><i class="fas fa-save"></i> ذخیره تغییرات</button>
                 <button class="btn btn-o" id="cancelSettings" style="margin-top:0.5rem;">انصراف</button>
 
-                <!-- دکمهٔ دانلود فایل HTML (انتشار دستی) -->
-                <button class="btn" id="downloadSiteBtn" style="margin-top:1rem; background:#2c2b28;">
-                    <i class="fas fa-download"></i> دریافت فایل نهایی برای آپلود
+                <button class="btn" id="downloadFullSiteBtn" style="margin-top:1rem; background:#2c2b28;">
+                    <i class="fas fa-download"></i> دریافت فایل نهایی
                 </button>
-                <p id="downloadStatus" style="margin-top:0.5rem; font-size:0.8rem; color:var(--t2);">پس از کلیک، فایل را در گیت‌هاب آپلود کنید.</p>
+                <p id="downloadStatus" style="margin-top:0.5rem; font-size:0.8rem; color:var(--t2);">پس از کلیک، فایل را در گیت‌هاب آپلود کن.</p>
             </div>
         </div>
     </div>
@@ -498,9 +496,7 @@
 
     <script>
         (function() {
-            // -------------------------------
-            // تنظیمات پیش‌فرض
-            // -------------------------------
+            // ---------- تنظیمات پیش‌فرض ----------
             const defaultSettings = {
                 username: "admin",
                 password: "shaer1402",
@@ -518,7 +514,6 @@
 
             let poems = JSON.parse(localStorage.getItem('poetPoems')) || [];
 
-            // قفل ورود
             const STORAGE_FAIL = "pfail";
             const STORAGE_TIME = "pftime";
             function getLockMinutes() {
@@ -543,7 +538,6 @@
                 showPoems();
             }
 
-            // منو
             const hamburger = document.getElementById('hamburger');
             const navLinks = document.getElementById('navLinks');
             const overlay = document.getElementById('overlay');
@@ -559,7 +553,6 @@
                 if (navLinks.classList.contains('on')) toggleMenu();
             });
 
-            // نمایش اطلاعات
             function updateInfoDisplay() {
                 document.getElementById('heroLine').textContent = settings.heroLine || '';
                 document.getElementById('heroQuote').textContent = settings.heroQuote || '';
@@ -573,7 +566,6 @@
             }
             updateInfoDisplay();
 
-            // اشعار
             const grid = document.getElementById('poemsGrid');
             const poemViewModal = document.getElementById('poemViewModal');
             const viewTitle = document.getElementById('viewTitle');
@@ -650,7 +642,6 @@
                 document.getElementById('poemModal').classList.remove('on');
             };
 
-            // ورود
             document.getElementById('adminLink').onclick = (e) => {
                 e.preventDefault();
                 document.getElementById('loginErr').style.display = 'none';
@@ -681,7 +672,6 @@
                 }
             };
 
-            // چشم رمز
             const toggleLoginPasswordBtn = document.getElementById('toggleLoginPasswordBtn');
             const loginPasswordInput = document.getElementById('loginPass');
             toggleLoginPasswordBtn.addEventListener('click', () => {
@@ -698,7 +688,6 @@
                 togglePasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
             });
 
-            // کد تأیید
             emailjs.init("CaGScIf9w-J6ii4SW");
             let currentVerificationCode = null;
             let codeSentTime = null;
@@ -759,7 +748,6 @@
                     });
             });
 
-            // تنظیمات
             document.getElementById('settingsLink').onclick = (e) => {
                 e.preventDefault();
                 if (!isAdmin()) return;
@@ -823,21 +811,73 @@
                 document.getElementById('settingsModal').classList.remove('on');
             };
 
-            // دکمهٔ دانلود فایل HTML با اشعار و تنظیمات فعلی
-            document.getElementById('downloadSiteBtn').addEventListener('click', () => {
+            // ---------- دانلود فایل کامل (نسخهٔ جادویی) ----------
+            document.getElementById('downloadFullSiteBtn').addEventListener('click', function() {
+                // 1. دریافت کل HTML صفحه
+                const fullHTML = document.documentElement.outerHTML;
+                
+                // 2. تبدیل به یک Document موقت برای دستکاری امن
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(fullHTML, 'text/html');
+                
+                // 3. پیدا کردن تگ اسکریپتی که تنظیمات پیش‌فرض را دارد
+                const scripts = doc.querySelectorAll('script');
+                let targetScript = null;
+                for (let script of scripts) {
+                    if (script.textContent.includes('const defaultSettings = {')) {
+                        targetScript = script;
+                        break;
+                    }
+                }
+                
+                if (!targetScript) {
+                    alert('خطا: اسکریپت اصلی پیدا نشد.');
+                    return;
+                }
+                
+                // 4. خواندن داده‌های فعلی
                 const currentSettings = JSON.parse(localStorage.getItem('poetSettings')) || defaultSettings;
                 const currentPoems = JSON.parse(localStorage.getItem('poetPoems')) || [];
-
-                // ساخت محتوای HTML نهایی با جایگزاری داده‌ها
-                let html = document.documentElement.outerHTML;
                 
-                // ما نمی‌توانیم به سادگی کل صفحه را ذخیره کنیم، چون شامل وضعیت فعلی localStorage نیست.
-                // بنابراین بهترین کار: خواندن قالب از خودش (با یک ترفند) و جایگزاری
-                // اما این کار پیچیده است. در عوض، ما یک نسخهٔ ساده‌تر: فایل فعلی را با localStorage جایگزین می‌کنیم؟
-                // راه حل ساده: دکمهٔ دانلود فقط برای مواقعی است که کاربر می‌خواهد فایل را آپلود کند؛
-                // ما می‌گوییم بعد از ذخیره تغییرات در مدیریت، این دکمه را بزنید تا یک فایل HTML با همان کد اصلی (بدون تغییر) دانلود کنید.
-                // بهتر است از همان فایل اصلی استفاده کنیم که در گیت‌هاب است.
-                alert('برای سادگی، لطفاً فایل index.html را مستقیماً از گیت‌هاب ویرایش کنید و اشعار را در بخش <script> و در متغیر poems وارد کنید.\n\nاما اگر عجله دارید، از همین صفحه با Ctrl+S ذخیره کنید و سپس فایل را در گیت‌هاب آپلود نمایید. (توجه: این روش ممکن است بعضی اطلاعات داینامیک را ذخیره نکند.)');
+                // 5. جایگزینی داده‌ها در اسکریپت
+                let scriptContent = targetScript.textContent;
+                
+                // جایگزینی defaultSettings
+                scriptContent = scriptContent.replace(
+                    /const defaultSettings = \{[\s\S]*?\};/,
+                    `const defaultSettings = ${JSON.stringify(currentSettings, null, 2)};`
+                );
+                
+                // اضافه کردن آرایهٔ اشعار به عنوان مقدار پیش‌فرض در صورت نبودن
+                // اول ببینیم آیا خطی مثل let poems = JSON.parse(...) وجود دارد
+                // ما می‌خواهیم آن را تبدیل کنیم به let poems = JSON.parse(localStorage.getItem('poetPoems')) || defaultPoems;
+                // که defaultPoems را تعریف نکردیم. پس باید قبل از آن تعریف کنیم.
+                // راه ساده‌تر: قبل از خط let poems = ... یک خط اضافه کنیم:
+                scriptContent = scriptContent.replace(
+                    /let poems = JSON\.parse\(localStorage\.getItem\('poetPoems'\)\) \|\| \[\]/,
+                    `const defaultPoems = ${JSON.stringify(currentPoems, null, 2)};\nlet poems = JSON.parse(localStorage.getItem('poetPoems')) || defaultPoems`
+                );
+                
+                targetScript.textContent = scriptContent;
+                
+                // 6. استخراج HTML نهایی
+                const finalHTML = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+                
+                // 7. دانلود
+                const blob = new Blob([finalHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'index.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                document.getElementById('downloadStatus').textContent = '✅ فایل کامل با شعرها و تنظیمات دانلود شد.';
+                setTimeout(() => {
+                    document.getElementById('downloadStatus').textContent = 'پس از کلیک، فایل را در گیت‌هاب جایگزین کن.';
+                }, 4000);
             });
 
             document.getElementById('logoutLink').onclick = (e) => {
