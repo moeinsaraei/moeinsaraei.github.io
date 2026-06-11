@@ -407,8 +407,8 @@
             <a href="#home" class="nav-logo"><span>دفتر</span> شعر</a>
             <button class="hamburger open" id="hamburger" aria-label="منو"><span></span><span></span><span></span></button>
             <ul class="nav-links on" id="navLinks">
-                <li><a href="#home" data-section="home" class="active"><i class="fas fa-home"></i> خانه</a></li>
-                <li><a href="#poems" data-section="poems"><i class="fas fa-feather-alt"></i> شعرها</a></li>
+                <li><a href="#home" data-section="home" class=""><i class="fas fa-home"></i> خانه</a></li>
+                <li><a href="#poems" data-section="poems" class="active"><i class="fas fa-feather-alt"></i> شعرها</a></li>
                 <li><a href="#about" data-section="about"><i class="fas fa-user"></i> درباره من</a></li>
                 <li><a href="#contact" data-section="contact"><i class="fas fa-envelope"></i> تماس</a></li>
                 <li><a class="admin-link" id="adminLink"><i class="fas fa-feather-alt"></i> ورود شاعر</a></li>
@@ -431,7 +431,7 @@
         </div>
     </section>
 
-    <section class="section reveal" id="poems">
+    <section class="section reveal visible" id="poems">
         <h2 class="section-title">آخرین سروده‌ها</h2>
         <div class="poems-box">
             <div class="poems-grid" id="poemsGrid"><div class="poem">
@@ -500,18 +500,18 @@
         </div>
     </section>
 
-    <section class="section reveal" id="about">
+    <section class="section reveal visible" id="about">
         <h2 class="section-title">درباره من</h2>
         <div class="about-text" id="aboutText">سلام! من معین سرایی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.</div>
     </section>
 
-    <section class="section reveal" id="contact">
+    <section class="section reveal visible" id="contact">
         <h2 class="section-title">با من در میان بگذارید</h2>
         <div class="contact-flex">
             <div class="contact-info" id="contactInfo">
                     <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-text"><strong>ایمیل</strong>moeinsaraei@gmail.com</div></div>
                     <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone"></i></div><div class="contact-text"><strong>تلفن</strong>09391339507</div></div>
-                    <div class="contact-item"><div class="contact-icon"><i class="fab fa-telegram-plane"></i></div><div class="contact-text"><strong>تلگرام</strong>TheRubatosis@</div></div>
+                    <div class="contact-item"><div class="contact-icon"><i class="fab fa-telegram-plane"></i></div><div class="contact-text"><strong>تلگرام</strong>@TheRubatosis</div></div>
                     <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-text"><strong>موقعیت</strong>سرولایت، روستای بیدخان</div></div>
                 </div>
             <form class="contact-form" action="https://formsubmit.co/moeinsaraei@gmail.com" method="POST">
@@ -567,7 +567,7 @@
                         </button>
                     </div>
                 </div>
-                <p id="loginErr" style="color: rgb(176, 71, 71); margin: 0.5rem 0px; display: block;">نام کاربری یا رمز عبور اشتباه است.</p>
+                <p id="loginErr" style="color: rgb(176, 71, 71); margin: 0.5rem 0px; display: none;">نام کاربری یا رمز عبور اشتباه است.</p>
                 <button class="btn" id="submitLogin"><i class="fas fa-key"></i> ورود</button>
                 <button class="btn btn-o" id="cancelLogin" style="margin-top:0.5rem;">انصراف</button>
             </div>
