@@ -408,8 +408,8 @@
             <button class="hamburger open" id="hamburger" aria-label="منو"><span></span><span></span><span></span></button>
             <ul class="nav-links on" id="navLinks">
                 <li><a href="#home" data-section="home" class="active"><i class="fas fa-home"></i> خانه</a></li>
-                <li><a href="#poems" data-section="poems" class=""><i class="fas fa-feather-alt"></i> شعرها</a></li>
-                <li><a href="#about" data-section="about" class=""><i class="fas fa-user"></i> درباره من</a></li>
+                <li><a href="#poems" data-section="poems"><i class="fas fa-feather-alt"></i> شعرها</a></li>
+                <li><a href="#about" data-section="about"><i class="fas fa-user"></i> درباره من</a></li>
                 <li><a href="#contact" data-section="contact"><i class="fas fa-envelope"></i> تماس</a></li>
                 <li><a class="admin-link" id="adminLink"><i class="fas fa-feather-alt"></i> ورود شاعر</a></li>
                 <li><a class="settings-link" id="settingsLink"><i class="fas fa-cog"></i> تنظیمات</a></li>
@@ -500,13 +500,13 @@
         </div>
     </section>
 
-    <section class="section reveal visible" id="about">
+    <section class="section reveal" id="about">
         <h2 class="section-title">درباره من</h2>
         <div class="about-text" id="aboutText">سلام! من معین سرایی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.
 اگر شعری را دوست داشتید یا مایل به هم‌صحبتی بودید، از بخش تماس پیام دهید.</div>
     </section>
 
-    <section class="section reveal visible" id="contact">
+    <section class="section reveal" id="contact">
         <h2 class="section-title">با من در میان بگذارید</h2>
         <div class="contact-flex">
             <div class="contact-info" id="contactInfo">
@@ -619,7 +619,7 @@
                 <button class="btn" id="publishToGithubBtn" style="margin-top:1rem; background:#2c2b28;">
                     <i class="fas fa-cloud-upload-alt"></i> انتشار مستقیم به گیت‌هاب
                 </button>
-                <p id="publishStatus" style="margin-top: 0.5rem; font-size: 0.8rem; color: rgb(44, 43, 40);">✅ سایت با موفقیت بروز شد.</p>
+                <p id="publishStatus" style="margin-top:0.5rem; font-size:0.8rem;"></p>
             </div>
         </div>
     </div>
@@ -641,9 +641,6 @@
 
     <script>
         (function() {
-            // ========================
-            // 1. پیکربندی اولیه
-            // ========================
             emailjs.init("CaGScIf9w-J6ii4SW");
 
             const defaultSettings = {
@@ -674,9 +671,6 @@
 
             let poems = JSON.parse(localStorage.getItem('poetPoems')) || defaultPoems;
 
-            // ========================
-            // 2. توابع کمکی
-            // ========================
             const STORAGE_FAIL = "pfail", STORAGE_TIME = "pftime";
             function getLockMinutes() {
                 const fails = parseInt(localStorage.getItem(STORAGE_FAIL)||'0');
@@ -700,9 +694,6 @@
                 showPoems();
             }
 
-            // ========================
-            // 3. منو
-            // ========================
             const hamburger = document.getElementById('hamburger');
             const navLinks = document.getElementById('navLinks');
             const overlay = document.getElementById('overlay');
@@ -718,9 +709,6 @@
                 if (navLinks.classList.contains('on')) toggleMenu();
             });
 
-            // ========================
-            // 4. نمایش اطلاعات
-            // ========================
             function updateInfoDisplay() {
                 document.getElementById('heroLine').textContent = settings.heroLine || '';
                 document.getElementById('heroQuote').textContent = settings.heroQuote || '';
@@ -734,9 +722,6 @@
             }
             updateInfoDisplay();
 
-            // ========================
-            // 5. اشعار
-            // ========================
             const grid = document.getElementById('poemsGrid');
             const poemViewModal = document.getElementById('poemViewModal');
             const viewTitle = document.getElementById('viewTitle');
@@ -813,9 +798,6 @@
                 document.getElementById('poemModal').classList.remove('on');
             };
 
-            // ========================
-            // 6. ورود
-            // ========================
             document.getElementById('adminLink').onclick = (e) => {
                 e.preventDefault();
                 document.getElementById('loginErr').style.display = 'none';
@@ -846,9 +828,6 @@
                 }
             };
 
-            // ========================
-            // 7. چشم رمز
-            // ========================
             const toggleLoginPasswordBtn = document.getElementById('toggleLoginPasswordBtn');
             const loginPasswordInput = document.getElementById('loginPass');
             toggleLoginPasswordBtn.addEventListener('click', () => {
@@ -865,9 +844,6 @@
                 togglePasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
             });
 
-            // ========================
-            // 8. کد تأیید
-            // ========================
             let currentVerificationCode = null;
             let codeSentTime = null;
             let countdownInterval = null;
@@ -917,9 +893,6 @@
                     });
             });
 
-            // ========================
-            // 9. تنظیمات
-            // ========================
             document.getElementById('settingsLink').onclick = (e) => {
                 e.preventDefault();
                 if (!isAdmin()) return;
@@ -974,9 +947,6 @@
                 document.getElementById('settingsModal').classList.remove('on');
             };
 
-            // ========================
-            // 10. انتشار مستقیم به گیت‌هاب
-            // ========================
             document.getElementById('publishToGithubBtn').addEventListener('click', async () => {
                 const token = localStorage.getItem('github_token');
                 if (!token) return alert('لطفاً ابتدا توکن گیت‌هاب را در تنظیمات وارد کنید.');
@@ -986,17 +956,14 @@
                 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/index.html`;
 
                 try {
-                    // خواندن کل محتوای فعلی صفحه (که شامل اشعار و تنظیمات است)
                     const fullHTML = document.documentElement.outerHTML;
                     const contentBase64 = btoa(unescape(encodeURIComponent(fullHTML)));
 
-                    // دریافت SHA فایل فعلی
                     const getRes = await fetch(apiUrl, { headers: { Authorization: `token ${token}` } });
                     if (!getRes.ok) throw new Error('دریافت اطلاعات فایل فعلی ممکن نشد.');
                     const fileData = await getRes.json();
                     const sha = fileData.sha;
 
-                    // آپلود فایل جدید
                     const putRes = await fetch(apiUrl, {
                         method: 'PUT',
                         headers: {
@@ -1023,21 +990,14 @@
                 }
             });
 
-            // ========================
-            // 11. خروج
-            // ========================
             document.getElementById('logoutLink').onclick = (e) => {
                 e.preventDefault();
                 if (confirm('خروج؟')) setAdmin(false);
             };
 
-            // ========================
-            // 12. راه‌اندازی نهایی
-            // ========================
             if (isAdmin()) document.body.classList.add('admin');
             showPoems();
 
-            // پیغام تشکر
             const params = new URLSearchParams(window.location.search);
             if (params.get('sent') === '1') {
                 document.getElementById('thanksOverlay').classList.add('on');
@@ -1050,7 +1010,6 @@
                 document.getElementById('thanksOverlay').classList.remove('on');
             });
 
-            // اسکرول
             window.addEventListener('scroll', () => {
                 const scroll = window.scrollY + 120;
                 document.querySelectorAll('section[id]').forEach(s => {
@@ -1059,7 +1018,6 @@
                 });
             });
 
-            // reveal
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
             }, { threshold: 0.2 });
