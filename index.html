@@ -8,6 +8,10 @@
     <meta name="keywords" content="معین سرائی, معین سرایی, شعر, دفتر شعر">
     <meta name="author" content="معین سرائی">
     <meta name="robots" content="index, follow">
+    <!-- جلوگیری از کش شدن -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 
     <script type="application/ld+json">
     {
@@ -22,7 +26,6 @@
 
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
         :root {
@@ -114,12 +117,6 @@
             padding:0.35rem 0; cursor:pointer; display:flex; align-items:center; gap:0.4rem;
         }
         .nav-links a:hover, .nav-links a.active { color:var(--ac); }
-        .admin-link { color:var(--ac)!important; font-weight:700!important; }
-        .logout-link, .settings-link { display:none!important; font-weight:700!important; cursor:pointer; }
-        .logout-link { color:#b04747!important; }
-        .settings-link { color:var(--ac)!important; }
-        body.admin .logout-link, body.admin .settings-link { display:flex!important; }
-        body.admin .admin-link { display:none!important; }
         .overlay {
             position:fixed; inset:0; background:rgba(0,0,0,0.25);
             z-index:998; opacity:0; pointer-events:none; transition:opacity var(--tr);
@@ -163,19 +160,6 @@
             height:2em; display:flex; align-items:flex-end; justify-content:flex-end;
             padding-left:0.5rem; color:var(--t2); font-weight:bold;
         }
-        .poem .actions { display:flex; justify-content:space-between; align-items:center; margin-top:0.8rem; }
-        .poem .toggle { color:var(--ac); font-weight:600; font-size:0.85rem; background:none; border:none; cursor:pointer; }
-        .poem .del { color:#b04747; background:none; border:none; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:0.3rem; }
-        .add-btn {
-            display:flex; align-items:center; justify-content:center;
-            gap:0.5rem; margin:1.5rem auto 0;
-            background:var(--bg2); border:2px dashed var(--bd);
-            border-radius:var(--r2); padding:1rem 2rem;
-            font-weight:600; color:var(--t2); cursor:pointer; transition:all var(--tr);
-        }
-        .add-btn:hover { border-color:var(--ac); color:var(--ac); background:var(--acl); }
-        .hidden { display:none!important; }
-        body.admin .hidden { display:flex!important; }
 
         .about-text {
             font-size:1.1rem; line-height:2.2; color:var(--t2);
@@ -230,8 +214,6 @@
             background:var(--ac); color:#fff; box-shadow:0 4px 14px rgba(138,109,75,0.3);
         }
         .btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(138,109,75,0.4); }
-        .btn-o { background:transparent; color:var(--t1); border:2px solid var(--bd); box-shadow:none; }
-        .btn-o:hover { background:var(--acl); border-color:var(--ac); color:var(--ac); }
 
         .footer { text-align:center; padding:2rem; border-top:1px solid var(--bdl); color:var(--t3); font-size:0.85rem; position:relative; z-index:1; }
         .footer .social { display:flex; justify-content:center; gap:1rem; margin-bottom:0.8rem; }
@@ -263,51 +245,63 @@
         .poem-view-title { font-size:2rem; margin-bottom:2rem; color:var(--ac); }
         .poem-view-text { font-size:1.1rem; line-height:2.4; white-space:pre-line; }
 
-        .modal {
-            display:none; position:fixed; inset:0;
-            background:rgba(0,0,0,0.5); z-index:2000;
-            align-items:center; justify-content:center; backdrop-filter:blur(4px);
+        /* استایل پیام تشکر */
+        .thanks-overlay {
+            display:none; position:fixed; inset:0; z-index:4000;
+            background:rgba(0,0,0,0.5); backdrop-filter:blur(6px);
+            align-items:center; justify-content:center;
         }
-        .modal.on { display:flex; }
-        .modal-box {
-            background:var(--bg2); border-radius:var(--r3);
-            padding:0; max-width:500px; width:90%;
-            box-shadow:var(--sh3); position:relative; text-align:center;
-            max-height:90vh; overflow-y:auto;
-            display:flex; flex-direction:column;
+        .thanks-overlay.on { display:flex; }
+        .thanks-card {
+            background:var(--bg2);
+            border-radius:var(--r3);
+            padding:3rem 2.5rem;
+            max-width:500px;
+            width:90%;
+            text-align:center;
+            box-shadow:0 24px 64px rgba(0,0,0,0.2);
+            animation:fadeIn 0.4s ease;
         }
-        .modal-header {
-            position: sticky; top: 0; z-index: 10;
-            background: var(--bg2); padding: 1rem 1.5rem;
-            display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid var(--bdl);
+        .thanks-card .icon {
+            font-size:4rem;
+            color:var(--ac);
+            background:var(--acl);
+            width:90px;
+            height:90px;
+            border-radius:50%;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            margin-bottom:1.2rem;
         }
-        .modal-header h3 { margin: 0; font-size: 1.3rem; }
-        .modal-close {
-            background: none; border: none; font-size: 1.5rem;
-            cursor: pointer; color: var(--t3); line-height: 1;
+        .thanks-card h2 {
+            font-size:1.8rem;
+            margin-bottom:0.6rem;
+            font-weight:800;
         }
-        .modal-body { padding: 2rem 1.5rem; }
-        .modal-icon { font-size:2.5rem; color:var(--ac); margin-bottom:1rem; }
+        .thanks-card p {
+            color:var(--t2);
+            margin-bottom:1.8rem;
+        }
+        .thanks-card .btn-close {
+            background:var(--ac);
+            color:#fff;
+            border:none;
+            padding:0.7rem 2rem;
+            border-radius:var(--rf);
+            font-weight:600;
+            cursor:pointer;
+            transition:0.3s ease;
+            text-decoration:none;
+            display:inline-block;
+        }
+        .thanks-card .btn-close:hover {
+            transform:translateY(-2px);
+            box-shadow:0 8px 24px rgba(138,109,75,0.3);
+        }
+
         .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.7s, transform 0.7s; }
         .reveal.visible { opacity:1; transform:translateY(0); }
-
-        .password-wrapper {
-            display: flex; align-items: center;
-            border: 2px solid var(--bd); border-radius: var(--r1);
-            background: var(--bg); transition: var(--tr);
-        }
-        .password-wrapper:focus-within {
-            border-color: var(--ac); box-shadow: 0 0 0 4px rgba(138,109,75,0.12);
-        }
-        .password-wrapper input {
-            border: none !important; box-shadow: none !important;
-            flex: 1; padding: 0.8rem 1rem; background: transparent;
-        }
-        .password-wrapper .toggle-password {
-            background: none; border: none; padding: 0.5rem 1rem;
-            cursor: pointer; color: var(--t2); font-size: 1rem;
-        }
 
         @media (max-width: 768px) {
             .hero-name { font-size:2.4rem; }
@@ -348,9 +342,6 @@
                 <li><a href="#poems" data-section="poems"><i class="fas fa-feather-alt"></i> شعرها</a></li>
                 <li><a href="#about" data-section="about"><i class="fas fa-user"></i> درباره من</a></li>
                 <li><a href="#contact" data-section="contact"><i class="fas fa-envelope"></i> تماس</a></li>
-                <li><a class="admin-link" id="adminLink"><i class="fas fa-feather-alt"></i> ورود شاعر</a></li>
-                <li><a class="settings-link" id="settingsLink"><i class="fas fa-cog"></i> تنظیمات</a></li>
-                <li><a class="logout-link" id="logoutLink"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
             </ul>
         </div>
     </nav>
@@ -372,7 +363,6 @@
         <h2 class="section-title">آخرین سروده‌ها</h2>
         <div class="poems-box">
             <div class="poems-grid" id="poemsGrid"></div>
-            <div class="add-btn hidden" id="addBtn"><i class="fas fa-plus-circle"></i> افزودن شعر جدید</div>
         </div>
     </section>
 
@@ -392,7 +382,7 @@
             </div>
             <form class="contact-form" action="https://formsubmit.co/moeinsaraei@gmail.com" method="POST">
                 <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_next" value="">
+                <input type="hidden" name="_next" value="https://moeinsaraei.github.io/?sent=1">
                 <div class="form-group"><label>نام شما</label><input type="text" name="name" placeholder="نام و نام خانوادگی" required></div>
                 <div class="form-group"><label>ایمیل</label><input type="email" name="email" placeholder="your@email.com" required></div>
                 <div class="form-group"><label>پیام</label><textarea name="message" rows="4" placeholder="سلام!..." required></textarea></div>
@@ -403,11 +393,12 @@
 
     <footer class="footer">
         <div class="social">
-            <a href="https://t.me/TheUnfinishedRevolt" target="_blank" title="تلگرام"><i class="fab fa-telegram-plane"></i></a>
+            <a href="https://t.me/TheRubatosis" target="_blank" title="تلگرام"><i class="fab fa-telegram-plane"></i></a>
         </div>
         <p>© ۱۴۰۵ | دفتر شعر <strong>معین سرائی</strong></p>
     </footer>
 
+    <!-- مدال نمایش شعر -->
     <div class="poem-view-modal" id="poemViewModal">
         <div class="poem-view-content">
             <button class="poem-view-close" id="closePoemView">&times;</button>
@@ -416,105 +407,20 @@
         </div>
     </div>
 
-    <div class="modal" id="loginModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3>ورود شاعر</h3>
-                <button class="modal-close" id="closeLoginModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-icon"><i class="fas fa-feather-alt"></i></div>
-                <div class="form-group"><label>نام کاربری</label><input type="text" id="loginUser" placeholder="نام کاربری"></div>
-                <div class="form-group">
-                    <label>رمز عبور</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="loginPass" placeholder="رمز عبور">
-                        <button class="toggle-password" id="toggleLoginPasswordBtn" type="button">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <p id="loginErr" style="color:#b04747;margin:0.5rem 0;display:none;"></p>
-                <button class="btn" id="submitLogin"><i class="fas fa-key"></i> ورود</button>
-                <button class="btn btn-o" id="cancelLogin" style="margin-top:0.5rem;">انصراف</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="settingsModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3>تنظیمات مدیریت</h3>
-                <button class="modal-close" id="closeSettingsModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-icon"><i class="fas fa-cog"></i></div>
-                <div class="form-group"><label>نام کاربری جدید</label><input type="text" id="newUsername"></div>
-                <div class="form-group">
-                    <label>رمز عبور جدید</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="newPassword" placeholder="در صورت عدم تغییر خالی بگذارید">
-                        <button class="toggle-password" id="togglePasswordBtn" type="button">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="form-group" id="verificationGroup">
-                    <label>کد تأیید (برای تغییر رمز)</label>
-                    <div style="display:flex; gap:0.5rem; align-items:center;">
-                        <input type="text" id="verificationCode" placeholder="کد ۶ رقمی" maxlength="6" style="flex:1;">
-                        <button class="btn" id="sendCodeBtn" style="white-space:nowrap; padding:0.6rem 1rem;"><i class="fas fa-paper-plane"></i> ارسال کد</button>
-                    </div>
-                    <p id="codeMsg" style="font-size:0.8rem; margin-top:0.3rem; color:var(--t2);">کد به ایمیل شما ارسال خواهد شد.</p>
-                </div>
-                <div class="form-group"><label>متن زیر نام</label><textarea id="newHeroLine" rows="3"></textarea></div>
-                <div class="form-group"><label>متن نقل قول</label><input type="text" id="newHeroQuote"></div>
-                <div class="form-group"><label>متن درباره من</label><textarea id="newAbout" rows="4"></textarea></div>
-                <div class="form-group"><label>ایمیل</label><input type="email" id="newEmail"></div>
-                <div class="form-group"><label>تلفن</label><input type="text" id="newPhone"></div>
-                <div class="form-group"><label>تلگرام</label><input type="text" id="newTelegram" placeholder="آیدی یا لینک"></div>
-                <div class="form-group"><label>موقعیت</label><input type="text" id="newLocation"></div>
-                <button class="btn" id="saveSettings"><i class="fas fa-save"></i> ذخیره تغییرات</button>
-                <button class="btn btn-o" id="cancelSettings" style="margin-top:0.5rem;">انصراف</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="poemModal">
-        <div class="modal-box" style="max-width:550px;">
-            <div class="modal-header">
-                <h3>افزودن شعر</h3>
-                <button class="modal-close" id="closePoemModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group"><label>عنوان</label><input type="text" id="poemTitle" placeholder="نام شعر..."></div>
-                <div class="form-group"><label>متن</label><textarea id="poemContent" rows="8" placeholder="مصرع‌ها..."></textarea></div>
-                <button class="btn" id="savePoem"><i class="fas fa-save"></i> ذخیره</button>
-                <button class="btn btn-o" id="cancelPoem" style="margin-top:0.5rem;">انصراف</button>
-            </div>
+    <!-- پیغام تشکر (overlay) -->
+    <div class="thanks-overlay" id="thanksOverlay">
+        <div class="thanks-card">
+            <div class="icon"><i class="fas fa-check"></i></div>
+            <h2>پیام شما با موفقیت ارسال شد</h2>
+            <p>سپاسگزارم که پیام گذاشتید. به‌زودی پاسخ خواهم داد.</p>
+            <button class="btn-close" id="closeThanks">بازگشت</button>
         </div>
     </div>
 
     <script>
         (function() {
-            // ---------- تنظیمات پیش‌فرض ----------
-            const defaultSettings = {
-                username: "adm_vx92kfw",
-                password: "zqwpovnldsmfghweir2358vcnr",
-                heroLine: "نغمه های زندگانی در بند بند وجود کلمات نهفته است ؛\nبا ادبیات میتوان موسیقی امید را بر پیکر بی روح سرنوشت نواخت و بر این جهان\nسراسر معنا نوید بخش درکی تازه داد.",
-                heroQuote: "«هر واژه بازیگر نمایش بی روح زندگانیست»",
-                about: "سلام! من معین سرایی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.",
-                email: "moeinsaraei@gmail.com",
-                phone: "09391339507",
-                telegram: "@TheRubatosis",
-                location: "خراسان رضوی، قوچان"
-            };
-
-            let settings = JSON.parse(localStorage.getItem('poetSettings')) || defaultSettings;
-            function saveSettings() { localStorage.setItem('poetSettings', JSON.stringify(settings)); }
-
-            // ---------- اشعار پیش‌فرض ----------
-            const defaultPoems = [
+            // ---------- اشعار ثابت ----------
+            const poems = [
                 {
                     title: "شب تار",
                     content: "شب تار است و دلم محفل آوارگی است\nساقیا رند زمان تشنه به میخوارگی است\nمی ما را به جفای غم ایام بریز\nکه فلک هر جهتش ختم به بیچارگی است\nعاقلان را جنم عشق به معشوق که نیست\nآنکه دل را بدهد ظن به دیوانگی است\nبه غزل من قسمت می دهم از دوری تو\nدل ما در قفس عشق به آزادگی است"
@@ -549,32 +455,7 @@
                 }
             ];
 
-            let poems = JSON.parse(localStorage.getItem('poetPoems')) || defaultPoems;
-
-            const STORAGE_FAIL = "pfail";
-            const STORAGE_TIME = "pftime";
-            function getLockMinutes() {
-                const fails = parseInt(localStorage.getItem(STORAGE_FAIL)||'0');
-                const last = parseInt(localStorage.getItem(STORAGE_TIME)||'0');
-                if (fails >= 5 && Date.now() - last < 15*60*1000)
-                    return Math.ceil((15*60*1000 - (Date.now()-last))/60000);
-                return 0;
-            }
-            function addFail() {
-                let f = parseInt(localStorage.getItem(STORAGE_FAIL)||'0') + 1;
-                localStorage.setItem(STORAGE_FAIL, f);
-                localStorage.setItem(STORAGE_TIME, Date.now().toString());
-            }
-            function clearFails() { localStorage.removeItem(STORAGE_FAIL); localStorage.removeItem(STORAGE_TIME); }
-
-            const ADMIN_KEY = 'is_poet_admin';
-            function isAdmin() { return localStorage.getItem(ADMIN_KEY) === '1'; }
-            function setAdmin(v) {
-                if (v) { document.body.classList.add('admin'); localStorage.setItem(ADMIN_KEY, '1'); }
-                else { document.body.classList.remove('admin'); localStorage.removeItem(ADMIN_KEY); }
-                showPoems();
-            }
-
+            // ---------- منوی همبرگری ----------
             const hamburger = document.getElementById('hamburger');
             const navLinks = document.getElementById('navLinks');
             const overlay = document.getElementById('overlay');
@@ -590,19 +471,7 @@
                 if (navLinks.classList.contains('on')) toggleMenu();
             });
 
-            function updateInfoDisplay() {
-                document.getElementById('heroLine').textContent = settings.heroLine || '';
-                document.getElementById('heroQuote').textContent = settings.heroQuote || '';
-                document.getElementById('aboutText').textContent = settings.about || '';
-                document.getElementById('contactInfo').innerHTML = `
-                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-text"><strong>ایمیل</strong>${settings.email}</div></div>
-                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone"></i></div><div class="contact-text"><strong>تلفن</strong>${settings.phone}</div></div>
-                    <div class="contact-item"><div class="contact-icon"><i class="fab fa-telegram-plane"></i></div><div class="contact-text"><strong>تلگرام</strong>${settings.telegram}</div></div>
-                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-text"><strong>موقعیت</strong>${settings.location}</div></div>
-                `;
-            }
-            updateInfoDisplay();
-
+            // ---------- نمایش اشعار ----------
             const grid = document.getElementById('poemsGrid');
             const poemViewModal = document.getElementById('poemViewModal');
             const viewTitle = document.getElementById('viewTitle');
@@ -630,232 +499,36 @@
                     grid.innerHTML = '<p style="color:var(--t3); text-align:center; grid-column:1/-1; padding:2rem;">هنوز شعری نیست.</p>';
                     return;
                 }
-                const admin = isAdmin();
-                poems.forEach((p,i) => {
+                poems.forEach((p) => {
                     const card = document.createElement('div');
                     card.className = 'poem';
                     const preview = p.content.split('\n').slice(0,3).join('\n') || '...';
                     card.innerHTML = `
                         <h3>${p.title||'بدون عنوان'}</h3>
-                        <div class="preview">${preview}</div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            ${admin ? '<button class="del"><i class="fas fa-trash"></i> حذف</button>' : ''}
-                        </div>`;
-                    card.querySelector('.toggle').onclick = (e) => {
-                        e.stopPropagation();
-                        openPoemView(p.title, p.content);
-                    };
+                        <div class="preview">${preview}</div>`;
                     card.onclick = () => openPoemView(p.title, p.content);
-                    if (admin) {
-                        card.querySelector('.del').onclick = (e) => {
-                            e.stopPropagation();
-                            if (confirm('حذف شود؟')) {
-                                poems.splice(i,1);
-                                localStorage.setItem('poetPoems', JSON.stringify(poems));
-                                showPoems();
-                            }
-                        };
-                    }
                     grid.appendChild(card);
                 });
             }
 
-            document.getElementById('addBtn').onclick = () => {
-                if (!isAdmin()) return;
-                document.getElementById('poemTitle').value = '';
-                document.getElementById('poemContent').value = '';
-                document.getElementById('poemModal').classList.add('on');
-            };
-            document.getElementById('closePoemModal').onclick = () => document.getElementById('poemModal').classList.remove('on');
-            document.getElementById('cancelPoem').onclick = () => document.getElementById('poemModal').classList.remove('on');
-            document.getElementById('savePoem').onclick = () => {
-                const title = document.getElementById('poemTitle').value.trim();
-                const content = document.getElementById('poemContent').value.trim();
-                if (!content) return alert('متن شعر الزامی است.');
-                poems.unshift({ title: title||'بدون عنوان', content });
-                localStorage.setItem('poetPoems', JSON.stringify(poems));
-                showPoems();
-                document.getElementById('poemModal').classList.remove('on');
-            };
-
-            document.getElementById('adminLink').onclick = (e) => {
-                e.preventDefault();
-                document.getElementById('loginErr').style.display = 'none';
-                document.getElementById('loginUser').value = '';
-                document.getElementById('loginPass').value = '';
-                document.getElementById('loginModal').classList.add('on');
-            };
-            document.getElementById('closeLoginModal').onclick = () => document.getElementById('loginModal').classList.remove('on');
-            document.getElementById('cancelLogin').onclick = () => document.getElementById('loginModal').classList.remove('on');
-            document.getElementById('submitLogin').onclick = () => {
-                const user = document.getElementById('loginUser').value.trim();
-                const pass = document.getElementById('loginPass').value;
-                const errEl = document.getElementById('loginErr');
-                const lock = getLockMinutes();
-                if (lock > 0) {
-                    errEl.textContent = `تا ${lock} دقیقه دیگر قفل است.`;
-                    errEl.style.display = 'block';
-                    return;
-                }
-                if (user === settings.username && pass === settings.password) {
-                    clearFails();
-                    setAdmin(true);
-                    document.getElementById('loginModal').classList.remove('on');
-                } else {
-                    addFail();
-                    errEl.textContent = 'نام کاربری یا رمز عبور اشتباه است.';
-                    errEl.style.display = 'block';
-                }
-            };
-
-            const toggleLoginPasswordBtn = document.getElementById('toggleLoginPasswordBtn');
-            const loginPasswordInput = document.getElementById('loginPass');
-            toggleLoginPasswordBtn.addEventListener('click', () => {
-                const isPassword = loginPasswordInput.type === 'password';
-                loginPasswordInput.type = isPassword ? 'text' : 'password';
-                toggleLoginPasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
-            });
-
-            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-            const newPasswordInput = document.getElementById('newPassword');
-            togglePasswordBtn.addEventListener('click', () => {
-                const isPassword = newPasswordInput.type === 'password';
-                newPasswordInput.type = isPassword ? 'text' : 'password';
-                togglePasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
-            });
-
-            emailjs.init("CaGScIf9w-J6ii4SW");
-            let currentVerificationCode = null;
-            let codeSentTime = null;
-            let countdownInterval = null;
-            const sendCodeBtn = document.getElementById('sendCodeBtn');
-
-            function resetSendButton() {
-                if (countdownInterval) {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
-                }
-                sendCodeBtn.disabled = false;
-                sendCodeBtn.style.opacity = '1';
-                sendCodeBtn.style.cursor = 'pointer';
-                sendCodeBtn.innerHTML = '<i class="fas fa-paper-plane"></i> ارسال کد';
-            }
-
-            sendCodeBtn.addEventListener('click', function() {
-                if (this.disabled) return;
-
-                const code = Math.floor(100000 + Math.random() * 900000).toString();
-                currentVerificationCode = code;
-                codeSentTime = Date.now();
-
-                this.disabled = true;
-                this.style.opacity = '0.6';
-                this.style.cursor = 'not-allowed';
-                let remaining = 60;
-                const btn = this;
-                const originalHTML = btn.innerHTML;
-                btn.innerHTML = `<span>${remaining}</span> ثانیه`;
-                countdownInterval = setInterval(() => {
-                    remaining--;
-                    btn.innerHTML = `<span>${remaining}</span> ثانیه`;
-                    if (remaining <= 0) {
-                        clearInterval(countdownInterval);
-                        btn.disabled = false;
-                        btn.style.opacity = '1';
-                        btn.style.cursor = 'pointer';
-                        btn.innerHTML = originalHTML;
-                        countdownInterval = null;
-                    }
-                }, 1000);
-
-                const templateParams = {
-                    code: code,
-                    email: "imone1357@gmail.com"
-                };
-
-                emailjs.send("service_qkqcp4a", "template_ts4kuxo", templateParams)
-                    .then(function(response) {
-                        document.getElementById('codeMsg').textContent = 'کد تأیید با موفقیت ارسال شد. لطفاً ایمیل خود را بررسی کنید.';
-                        document.getElementById('codeMsg').style.color = '#2c2b28';
-                    }, function(error) {
-                        document.getElementById('codeMsg').textContent = 'خطا در ارسال کد. دوباره تلاش کنید.';
-                        document.getElementById('codeMsg').style.color = '#b04747';
-                        console.error('EmailJS error:', error);
-                    });
-            });
-
-            document.getElementById('settingsLink').onclick = (e) => {
-                e.preventDefault();
-                if (!isAdmin()) return;
-                resetSendButton();
-                document.getElementById('newUsername').value = settings.username || '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('newHeroLine').value = settings.heroLine || '';
-                document.getElementById('newHeroQuote').value = settings.heroQuote || '';
-                document.getElementById('newAbout').value = settings.about || '';
-                document.getElementById('newEmail').value = settings.email || '';
-                document.getElementById('newPhone').value = settings.phone || '';
-                document.getElementById('newTelegram').value = settings.telegram || '';
-                document.getElementById('newLocation').value = settings.location || '';
-                document.getElementById('verificationCode').value = '';
-                document.getElementById('codeMsg').textContent = 'کد به ایمیل شما ارسال خواهد شد.';
-                document.getElementById('codeMsg').style.color = '#5e5c55';
-                currentVerificationCode = null;
-                codeSentTime = null;
-                document.getElementById('settingsModal').classList.add('on');
-            };
-
-            document.getElementById('closeSettingsModal').onclick = () => {
-                resetSendButton();
-                document.getElementById('settingsModal').classList.remove('on');
-            };
-            document.getElementById('cancelSettings').onclick = () => {
-                resetSendButton();
-                document.getElementById('settingsModal').classList.remove('on');
-            };
-
-            document.getElementById('saveSettings').onclick = () => {
-                const newUser = document.getElementById('newUsername').value.trim();
-                if (!newUser) return alert('نام کاربری نمی‌تواند خالی باشد.');
-                const newPass = document.getElementById('newPassword').value.trim();
-                
-                if (newPass) {
-                    const enteredCode = document.getElementById('verificationCode').value.trim();
-                    if (!enteredCode) return alert('لطفاً کد تأیید را وارد کنید.');
-                    if (!currentVerificationCode || !codeSentTime) return alert('ابتدا کد تأیید را ارسال کنید.');
-                    if (Date.now() - codeSentTime > 15 * 60 * 1000) {
-                        return alert('کد تأیید منقضی شده است. لطفاً مجدداً ارسال کنید.');
-                    }
-                    if (enteredCode !== currentVerificationCode) {
-                        return alert('کد تأیید اشتباه است.');
-                    }
-                    settings.password = newPass;
-                }
-
-                settings.username = newUser;
-                settings.heroLine = document.getElementById('newHeroLine').value.trim();
-                settings.heroQuote = document.getElementById('newHeroQuote').value.trim();
-                settings.about = document.getElementById('newAbout').value.trim();
-                settings.email = document.getElementById('newEmail').value.trim();
-                settings.phone = document.getElementById('newPhone').value.trim();
-                settings.telegram = document.getElementById('newTelegram').value.trim();
-                settings.location = document.getElementById('newLocation').value.trim();
-                
-                saveSettings();
-                updateInfoDisplay();
-                alert('تنظیمات ذخیره شد.');
-                document.getElementById('settingsModal').classList.remove('on');
-            };
-
-            document.getElementById('logoutLink').onclick = (e) => {
-                e.preventDefault();
-                if (confirm('خروج؟')) setAdmin(false);
-            };
-
-            if (isAdmin()) document.body.classList.add('admin');
             showPoems();
 
+            // ---------- بررسی و نمایش پیغام تشکر ----------
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('sent') === '1') {
+                document.getElementById('thanksOverlay').classList.add('on');
+                // پاک کردن پارامتر از آدرس بدون رفرش
+                if (window.history.replaceState) {
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({}, document.title, cleanUrl);
+                }
+            }
+
+            document.getElementById('closeThanks').addEventListener('click', () => {
+                document.getElementById('thanksOverlay').classList.remove('on');
+            });
+
+            // ---------- اسکرول ----------
             window.addEventListener('scroll', () => {
                 const scroll = window.scrollY + 120;
                 document.querySelectorAll('section[id]').forEach(s => {
@@ -864,6 +537,7 @@
                 });
             });
 
+            // ---------- reveal ----------
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
             }, { threshold: 0.2 });
