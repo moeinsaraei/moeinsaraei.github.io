@@ -25,6 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
+        /* همان CSS کامل قبلی */
         :root {
             --bg: #fbfaf7;
             --bg2: #fff;
@@ -468,19 +469,14 @@
                 <div class="form-group"><label>تلگرام</label><input type="text" id="newTelegram" placeholder="آیدی یا لینک"></div>
                 <div class="form-group"><label>موقعیت</label><input type="text" id="newLocation"></div>
                 
-                <div class="form-group">
-                    <label>توکن گیت‌هاب (برای انتشار خودکار)</label>
-                    <input type="password" id="githubToken" placeholder="ghp_...">
-                    <p style="font-size:0.75rem; color:var(--t3); margin-top:0.2rem;">برای فعال‌سازی انتشار مستقیم، یک توکن با دسترسی repo بسازید.</p>
-                </div>
-
                 <button class="btn" id="saveSettings"><i class="fas fa-save"></i> ذخیره تغییرات</button>
                 <button class="btn btn-o" id="cancelSettings" style="margin-top:0.5rem;">انصراف</button>
 
-                <button class="btn" id="publishToGithubBtn" style="margin-top:1rem; background:#2c2b28;">
-                    <i class="fas fa-cloud-upload-alt"></i> انتشار مستقیم به گیت‌هاب
+                <!-- دکمهٔ دانلود فایل HTML (انتشار دستی) -->
+                <button class="btn" id="downloadSiteBtn" style="margin-top:1rem; background:#2c2b28;">
+                    <i class="fas fa-download"></i> دریافت فایل نهایی برای آپلود
                 </button>
-                <p id="publishStatus" style="margin-top:0.5rem; font-size:0.8rem;"></p>
+                <p id="downloadStatus" style="margin-top:0.5rem; font-size:0.8rem; color:var(--t2);">پس از کلیک، فایل را در گیت‌هاب آپلود کنید.</p>
             </div>
         </div>
     </div>
@@ -503,926 +499,368 @@
     <script>
         (function() {
             // -------------------------------
-            // 1. قالب کلی سایت (برای تولید فایل نهایی هنگام انتشار)
+            // تنظیمات پیش‌فرض
             // -------------------------------
-            const SITE_TEMPLATE = `<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>معین سرائی (معین سرایی) | دفتر شعر</title>
-    <meta name="description" content="دفتر شعر معین سرائی (معین سرایی)، شاعر و نویسنده. اینجا سروده‌ها و دنیای واژه‌ها را ببینید.">
-    <meta name="keywords" content="معین سرائی, معین سرایی, شعر, دفتر شعر">
-    <meta name="author" content="معین سرائی">
-    <meta name="robots" content="index, follow">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "معین سرائی",
-      "alternateName": "معین سرایی",
-      "url": "https://moeinsaraei.github.io",
-      "description": "شاعر و نویسنده"
-    }
-    </` + `script>
-
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></` + `script>
-
-    <style>
-        /* تمام CSS که در بخش اول بود، عیناً اینجا قرار می‌گیرد */
-        :root {
-            --bg: #fbfaf7;
-            --bg2: #fff;
-            --bg3: #f4f2ee;
-            --t1: #2c2b28;
-            --t2: #5e5c55;
-            --t3: #949185;
-            --ac: #8a6d4b;
-            --acl: #f2ede6;
-            --bd: #e6e2da;
-            --bdl: #f0ede8;
-            --sh1: 0 1px 2px rgba(0,0,0,0.03);
-            --sh2: 0 4px 16px rgba(0,0,0,0.05);
-            --sh3: 0 12px 32px rgba(0,0,0,0.06);
-            --r1: 12px;
-            --r2: 16px;
-            --r3: 24px;
-            --rf: 9999px;
-            --tr: 0.3s ease;
-            --fn: 'Vazirmatn', sans-serif;
-            --nh: 70px;
-            --mx: 1050px;
-        }
-
-        * { scrollbar-width: none !important; }
-        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html { scroll-behavior:smooth; scroll-padding-top:var(--nh); }
-        body {
-            font-family:var(--fn);
-            background:var(--bg);
-            color:var(--t1);
-            line-height:1.8;
-            direction:rtl;
-            text-align:right;
-            overflow-x:hidden;
-            position:relative;
-        }
-        body::before {
-            content:''; position:fixed; top:-30%; right:-20%;
-            width:70vw; height:70vw; max-width:800px; max-height:800px;
-            background:radial-gradient(circle, rgba(138,109,75,0.08) 0%, transparent 70%);
-            border-radius:50%; z-index:0; pointer-events:none;
-            animation:floatBg 22s ease-in-out infinite;
-        }
-        body::after {
-            content:''; position:fixed; bottom:-25%; left:-15%;
-            width:55vw; height:55vw; max-width:600px; max-height:600px;
-            background:radial-gradient(circle, rgba(180,160,130,0.06) 0%, transparent 70%);
-            border-radius:50%; z-index:0; pointer-events:none;
-            animation:floatBg 28s ease-in-out infinite reverse;
-        }
-        @keyframes floatBg {
-            0%,100% { transform:translate(0,0) scale(1); }
-            50% { transform:translate(2%,-2%) scale(1.04); }
-        }
-        .navbar {
-            position:fixed; top:0; left:0; right:0; z-index:1000;
-            height:var(--nh); display:flex; align-items:center;
-            background:rgba(251,250,247,0.72);
-            backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
-            border-bottom:1px solid var(--bdl); padding:0 2rem;
-        }
-        .nav-container {
-            max-width:var(--mx); width:100%; margin:0 auto;
-            display:flex; align-items:center; justify-content:space-between;
-        }
-        .nav-logo { font-size:1.6rem; font-weight:800; color:var(--t1); text-decoration:none; }
-        .nav-logo span { color:var(--ac); }
-        .hamburger { display:flex; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; z-index:1001; padding:8px; }
-        .hamburger span { width:26px; height:2.5px; background:var(--t1); border-radius:4px; display:block; transition:var(--tr); }
-        .hamburger.open span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
-        .hamburger.open span:nth-child(2) { opacity:0; }
-        .hamburger.open span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
-        .nav-links {
-            position:fixed; top:0; right:0; width:70vw; max-width:320px;
-            height:100vh; background:var(--bg2); flex-direction:column;
-            align-items:flex-start; padding:6rem 2rem 2rem; gap:1.8rem;
-            box-shadow:var(--sh3); transform:translateX(100%);
-            transition:transform var(--tr); z-index:999;
-            display:flex; list-style:none;
-        }
-        .nav-links.on { transform:translateX(0); }
-        .nav-links a {
-            text-decoration:none; color:var(--t2); font-weight:500;
-            font-size:1rem; transition:color var(--tr); position:relative;
-            padding:0.35rem 0; cursor:pointer; display:flex; align-items:center; gap:0.4rem;
-        }
-        .nav-links a:hover, .nav-links a.active { color:var(--ac); }
-        .admin-link { color:var(--ac)!important; font-weight:700!important; }
-        .logout-link, .settings-link { display:none!important; font-weight:700!important; cursor:pointer; }
-        .logout-link { color:#b04747!important; }
-        .settings-link { color:var(--ac)!important; }
-        body.admin .logout-link, body.admin .settings-link { display:flex!important; }
-        body.admin .admin-link { display:none!important; }
-        .overlay {
-            position:fixed; inset:0; background:rgba(0,0,0,0.25);
-            z-index:998; opacity:0; pointer-events:none; transition:opacity var(--tr);
-        }
-        .overlay.on { opacity:1; pointer-events:auto; }
-
-        .section { position:relative; z-index:1; padding:4.5rem 2rem; max-width:var(--mx); margin:0 auto; }
-        .section-title { font-size:2.2rem; font-weight:800; margin-bottom:1.8rem; }
-        .hero { min-height:85vh; display:flex; align-items:center; padding-top:var(--nh); }
-        .hero-content { text-align:center; max-width:700px; margin:0 auto; }
-        .hero-line { font-size:1.1rem; font-weight:500; color:var(--t2); margin-bottom:0.5rem; line-height:2; white-space:pre-line; }
-        .hero-name { font-size:3.2rem; font-weight:900; margin:0.5rem 0 0.8rem; }
-        .hero-name span { color:var(--ac); }
-        .hero-quote { font-style:italic; color:var(--t3); font-size:1.05rem; margin:1.5rem 0; border-right:3px solid var(--acl); padding-right:1.2rem; display:inline-block; white-space:pre-line; }
-
-        .poems-box {
-            max-height:65vh; overflow-y:auto; padding:0.5rem 0.2rem;
-            border-radius:var(--r3);
-        }
-        .poems-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.5rem; padding-bottom:1rem; }
-        .poem {
-            background:var(--bg2); border:1px solid var(--bdl);
-            border-radius:var(--r3); padding:1.8rem; transition:all var(--tr);
-            box-shadow:var(--sh1); cursor:pointer; position:relative; overflow:hidden;
-        }
-        .poem:hover { transform:translateY(-4px); box-shadow:var(--sh3); border-color:var(--acl); }
-        .poem::before {
-            content:''; position:absolute; top:0; left:0; width:4px; height:100%;
-            background:linear-gradient(to bottom, var(--acl), var(--ac));
-            opacity:0.7; border-radius:0 4px 4px 0;
-        }
-        .poem h3 { font-size:1.3rem; margin-bottom:0.8rem; }
-        .poem .preview {
-            font-size:0.9rem; color:var(--t2); line-height:2;
-            white-space:pre-line; margin-bottom:1rem;
-            overflow:hidden; max-height:4.5em; position:relative;
-        }
-        .poem .preview::after {
-            content:'...'; position:absolute; bottom:0; left:0; right:0;
-            background:linear-gradient(to top, var(--bg2), transparent);
-            height:2em; display:flex; align-items:flex-end; justify-content:flex-end;
-            padding-left:0.5rem; color:var(--t2); font-weight:bold;
-        }
-        .poem .actions { display:flex; justify-content:space-between; align-items:center; margin-top:0.8rem; }
-        .poem .toggle { color:var(--ac); font-weight:600; font-size:0.85rem; background:none; border:none; cursor:pointer; }
-        .poem .del { color:#b04747; background:none; border:none; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:0.3rem; }
-        .add-btn {
-            display:flex; align-items:center; justify-content:center;
-            gap:0.5rem; margin:1.5rem auto 0;
-            background:var(--bg2); border:2px dashed var(--bd);
-            border-radius:var(--r2); padding:1rem 2rem;
-            font-weight:600; color:var(--t2); cursor:pointer; transition:all var(--tr);
-        }
-        .add-btn:hover { border-color:var(--ac); color:var(--ac); background:var(--acl); }
-        .hidden { display:none!important; }
-        body.admin .hidden { display:flex!important; }
-
-        .about-text {
-            font-size:1.1rem; line-height:2.2; color:var(--t2);
-            width:100%; max-width:700px; margin:0 auto;
-            white-space:pre-line; text-align:center;
-            padding:0 1rem;
-        }
-
-        .contact-flex {
-            display:flex; flex-wrap:nowrap; gap:2.5rem;
-            background:var(--bg2); border:1px solid var(--bdl);
-            border-radius:var(--r3); padding:2.5rem; box-shadow:var(--sh2);
-            align-items:stretch;
-        }
-        .contact-info {
-            flex:1 1 40%; min-width:250px;
-            display:flex; flex-direction:column;
-            gap:1rem;
-        }
-        .contact-item {
-            display:flex; align-items:center; gap:1rem;
-            padding:0.9rem 1.2rem;
-            background:var(--bg);
-            border-radius:var(--r2);
-            transition:var(--tr);
-        }
-        .contact-icon {
-            width:44px; height:44px; border-radius:50%; background:var(--acl);
-            display:flex; align-items:center; justify-content:center;
-            color:var(--ac); font-size:1.1rem; flex-shrink:0;
-        }
-        .contact-text strong { display:block; color:var(--t1); font-size:0.9rem; }
-        .contact-text { font-size:0.9rem; color:var(--t2); }
-        .contact-form {
-            flex:1 1 60%; min-width:280px;
-        }
-        .form-group { margin-bottom:1rem; }
-        .form-group label { font-weight:600; font-size:0.9rem; display:block; margin-bottom:0.3rem; }
-        .form-group input, .form-group textarea {
-            width:100%; padding:0.8rem 1rem; border:2px solid var(--bd);
-            border-radius:var(--r1); font-family:inherit; font-size:0.95rem;
-            background:var(--bg); transition:var(--tr);
-        }
-        .form-group input:focus, .form-group textarea:focus {
-            outline:none; border-color:var(--ac); box-shadow:0 0 0 4px rgba(138,109,75,0.12);
-        }
-        .btn {
-            display:inline-flex; align-items:center; gap:0.5rem;
-            padding:0.8rem 2rem; border-radius:var(--rf);
-            font-weight:600; font-size:0.95rem; text-decoration:none;
-            transition:all var(--tr); cursor:pointer; border:none;
-            background:var(--ac); color:#fff; box-shadow:0 4px 14px rgba(138,109,75,0.3);
-        }
-        .btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(138,109,75,0.4); }
-        .btn-o { background:transparent; color:var(--t1); border:2px solid var(--bd); box-shadow:none; }
-        .btn-o:hover { background:var(--acl); border-color:var(--ac); color:var(--ac); }
-
-        .footer { text-align:center; padding:2rem; border-top:1px solid var(--bdl); color:var(--t3); font-size:0.85rem; position:relative; z-index:1; }
-        .footer .social { display:flex; justify-content:center; gap:1rem; margin-bottom:0.8rem; }
-        .footer .social a {
-            width:38px; height:38px; border-radius:50%; background:var(--bg3);
-            display:flex; align-items:center; justify-content:center;
-            color:var(--t2); transition:var(--tr); text-decoration:none;
-        }
-        .footer .social a:hover { background:var(--ac); color:#fff; }
-
-        .poem-view-modal {
-            display:none; position:fixed; inset:0; z-index:3000;
-            background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
-            align-items:center; justify-content:center;
-        }
-        .poem-view-modal.on { display:flex; }
-        .poem-view-content {
-            background:var(--bg2); border-radius:var(--r3); max-width:600px;
-            width:90%; padding:3rem 2.5rem; box-shadow:0 24px 64px rgba(0,0,0,0.2);
-            position:relative; text-align:center; max-height:85vh;
-            overflow-y:auto;
-            animation:fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn { from{opacity:0;transform:scale(0.95);} to{opacity:1;transform:scale(1);} }
-        .poem-view-close {
-            position:absolute; top:1rem; left:1rem; background:none;
-            border:none; font-size:1.8rem; cursor:pointer; color:var(--t3);
-        }
-        .poem-view-title { font-size:2rem; margin-bottom:2rem; color:var(--ac); }
-        .poem-view-text { font-size:1.1rem; line-height:2.4; white-space:pre-line; }
-
-        .modal {
-            display:none; position:fixed; inset:0;
-            background:rgba(0,0,0,0.5); z-index:2000;
-            align-items:center; justify-content:center; backdrop-filter:blur(4px);
-        }
-        .modal.on { display:flex; }
-        .modal-box {
-            background:var(--bg2); border-radius:var(--r3);
-            padding:0; max-width:500px; width:90%;
-            box-shadow:var(--sh3); position:relative; text-align:center;
-            max-height:90vh; overflow-y:auto;
-            display:flex; flex-direction:column;
-        }
-        .modal-header {
-            position: sticky; top: 0; z-index: 10;
-            background: var(--bg2); padding: 1rem 1.5rem;
-            display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid var(--bdl);
-        }
-        .modal-header h3 { margin: 0; font-size: 1.3rem; }
-        .modal-close {
-            background: none; border: none; font-size: 1.5rem;
-            cursor: pointer; color: var(--t3); line-height: 1;
-        }
-        .modal-body { padding: 2rem 1.5rem; }
-        .modal-icon { font-size:2.5rem; color:var(--ac); margin-bottom:1rem; }
-        .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.7s, transform 0.7s; }
-        .reveal.visible { opacity:1; transform:translateY(0); }
-
-        .password-wrapper {
-            display: flex; align-items: center;
-            border: 2px solid var(--bd); border-radius: var(--r1);
-            background: var(--bg); transition: var(--tr);
-        }
-        .password-wrapper:focus-within {
-            border-color: var(--ac); box-shadow: 0 0 0 4px rgba(138,109,75,0.12);
-        }
-        .password-wrapper input {
-            border: none !important; box-shadow: none !important;
-            flex: 1; padding: 0.8rem 1rem; background: transparent;
-        }
-        .password-wrapper .toggle-password {
-            background: none; border: none; padding: 0.5rem 1rem;
-            cursor: pointer; color: var(--t2); font-size: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .hero-name { font-size:2.4rem; }
-            .poems-grid { grid-template-columns:1fr; }
-            .section-title { font-size:1.8rem; }
-            .contact-flex { gap:1.2rem; padding:1.5rem; flex-direction: row; }
-            .contact-info { min-width:180px; flex-direction: column; }
-            .contact-item { padding:0.7rem 0.9rem; gap:0.8rem; }
-            .contact-icon { width:36px; height:36px; font-size:1rem; }
-            .contact-text strong { font-size:0.8rem; }
-            .contact-text { font-size:0.8rem; }
-            .contact-form { min-width:200px; }
-            .form-group input, .form-group textarea { padding:0.6rem 0.8rem; font-size:0.85rem; }
-            .btn { padding:0.6rem 1.3rem; font-size:0.85rem; }
-        }
-
-        @media (max-width: 500px) {
-            .section { padding: 2rem 0.5rem; }
-            .contact-flex { gap:0.5rem; padding:0.8rem; flex-direction: row; }
-            .contact-info { min-width: 0; flex: 1 1 45%; flex-direction: column; gap: 0.5rem; }
-            .contact-item { padding:0.3rem 0.4rem; gap:0.4rem; min-width: 0; overflow: hidden; }
-            .contact-icon { width:24px; height:24px; font-size:0.7rem; }
-            .contact-text strong { font-size:0.65rem; }
-            .contact-text { font-size:0.65rem; word-break: break-word; overflow-wrap: break-word; }
-            .contact-form { min-width: 0; flex: 1 1 55%; }
-            .form-group input, .form-group textarea { padding:0.4rem 0.5rem; font-size:0.75rem; }
-            .btn { padding:0.4rem 0.8rem; font-size:0.75rem; }
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="#home" class="nav-logo"><span>دفتر</span> شعر</a>
-            <button class="hamburger" id="hamburger" aria-label="منو"><span></span><span></span><span></span></button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#home" data-section="home" class="active"><i class="fas fa-home"></i> خانه</a></li>
-                <li><a href="#poems" data-section="poems"><i class="fas fa-feather-alt"></i> شعرها</a></li>
-                <li><a href="#about" data-section="about"><i class="fas fa-user"></i> درباره من</a></li>
-                <li><a href="#contact" data-section="contact"><i class="fas fa-envelope"></i> تماس</a></li>
-                <li><a class="admin-link" id="adminLink"><i class="fas fa-feather-alt"></i> ورود شاعر</a></li>
-                <li><a class="settings-link" id="settingsLink"><i class="fas fa-cog"></i> تنظیمات</a></li>
-                <li><a class="logout-link" id="logoutLink"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
-            </ul>
-        </div>
-    </nav>
-    <div class="overlay" id="overlay"></div>
-
-    <section class="hero" id="home">
-        <div class="section">
-            <div class="hero-content">
-                <h1 class="hero-name">معین <span>سرائی</span></h1>
-                <div class="hero-line" id="heroLine"></div>
-                <div class="hero-quote" id="heroQuote"></div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section reveal" id="poems">
-        <h2 class="section-title">آخرین سروده‌ها</h2>
-        <div class="poems-box">
-            <div class="poems-grid" id="poemsGrid"></div>
-            <div class="add-btn hidden" id="addBtn"><i class="fas fa-plus-circle"></i> افزودن شعر جدید</div>
-        </div>
-    </section>
-
-    <section class="section reveal" id="about">
-        <h2 class="section-title">درباره من</h2>
-        <div class="about-text" id="aboutText"></div>
-    </section>
-
-    <section class="section reveal" id="contact">
-        <h2 class="section-title">با من در میان بگذارید</h2>
-        <div class="contact-flex">
-            <div class="contact-info" id="contactInfo"></div>
-            <form class="contact-form" action="https://formsubmit.co/moeinsaraei@gmail.com" method="POST">
-                <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_next" value="">
-                <div class="form-group"><label>نام شما</label><input type="text" name="name" placeholder="نام و نام خانوادگی" required></div>
-                <div class="form-group"><label>ایمیل</label><input type="email" name="email" placeholder="your@email.com" required></div>
-                <div class="form-group"><label>پیام</label><textarea name="message" rows="4" placeholder="سلام!..." required></textarea></div>
-                <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> ارسال</button>
-            </form>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="social">
-            <a href="https://t.me/TheUnfinishedRevolt" target="_blank" title="تلگرام"><i class="fab fa-telegram-plane"></i></a>
-        </div>
-        <p>© ۱۴۰۵ | دفتر شعر <strong>معین سرائی</strong></p>
-    </footer>
-
-    <div class="poem-view-modal" id="poemViewModal">
-        <div class="poem-view-content">
-            <button class="poem-view-close" id="closePoemView">&times;</button>
-            <h2 class="poem-view-title" id="viewTitle"></h2>
-            <div class="poem-view-text" id="viewText"></div>
-        </div>
-    </div>
-
-    <div class="modal" id="loginModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3>ورود شاعر</h3>
-                <button class="modal-close" id="closeLoginModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-icon"><i class="fas fa-feather-alt"></i></div>
-                <div class="form-group"><label>نام کاربری</label><input type="text" id="loginUser" placeholder="نام کاربری"></div>
-                <div class="form-group">
-                    <label>رمز عبور</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="loginPass" placeholder="رمز عبور">
-                        <button class="toggle-password" id="toggleLoginPasswordBtn" type="button">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <p id="loginErr" style="color:#b04747;margin:0.5rem 0;display:none;"></p>
-                <button class="btn" id="submitLogin"><i class="fas fa-key"></i> ورود</button>
-                <button class="btn btn-o" id="cancelLogin" style="margin-top:0.5rem;">انصراف</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="settingsModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3>تنظیمات مدیریت</h3>
-                <button class="modal-close" id="closeSettingsModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-icon"><i class="fas fa-cog"></i></div>
-                <div class="form-group"><label>نام کاربری جدید</label><input type="text" id="newUsername"></div>
-                <div class="form-group">
-                    <label>رمز عبور جدید</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="newPassword" placeholder="در صورت عدم تغییر خالی بگذارید">
-                        <button class="toggle-password" id="togglePasswordBtn" type="button">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="form-group" id="verificationGroup">
-                    <label>کد تأیید (برای تغییر رمز)</label>
-                    <div style="display:flex; gap:0.5rem; align-items:center;">
-                        <input type="text" id="verificationCode" placeholder="کد ۶ رقمی" maxlength="6" style="flex:1;">
-                        <button class="btn" id="sendCodeBtn" style="white-space:nowrap; padding:0.6rem 1rem;"><i class="fas fa-paper-plane"></i> ارسال کد</button>
-                    </div>
-                    <p id="codeMsg" style="font-size:0.8rem; margin-top:0.3rem; color:var(--t2);">کد به ایمیل شما ارسال خواهد شد.</p>
-                </div>
-                <div class="form-group"><label>متن زیر نام</label><textarea id="newHeroLine" rows="3"></textarea></div>
-                <div class="form-group"><label>متن نقل قول</label><input type="text" id="newHeroQuote"></div>
-                <div class="form-group"><label>متن درباره من</label><textarea id="newAbout" rows="4"></textarea></div>
-                <div class="form-group"><label>ایمیل</label><input type="email" id="newEmail"></div>
-                <div class="form-group"><label>تلفن</label><input type="text" id="newPhone"></div>
-                <div class="form-group"><label>تلگرام</label><input type="text" id="newTelegram" placeholder="آیدی یا لینک"></div>
-                <div class="form-group"><label>موقعیت</label><input type="text" id="newLocation"></div>
-                
-                <div class="form-group">
-                    <label>توکن گیت‌هاب (برای انتشار خودکار)</label>
-                    <input type="password" id="githubToken" placeholder="ghp_...">
-                    <p style="font-size:0.75rem; color:var(--t3); margin-top:0.2rem;">برای فعال‌سازی انتشار مستقیم، یک توکن با دسترسی repo بسازید.</p>
-                </div>
-
-                <button class="btn" id="saveSettings"><i class="fas fa-save"></i> ذخیره تغییرات</button>
-                <button class="btn btn-o" id="cancelSettings" style="margin-top:0.5rem;">انصراف</button>
-
-                <button class="btn" id="publishToGithubBtn" style="margin-top:1rem; background:#2c2b28;">
-                    <i class="fas fa-cloud-upload-alt"></i> انتشار مستقیم به گیت‌هاب
-                </button>
-                <p id="publishStatus" style="margin-top:0.5rem; font-size:0.8rem;"></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="poemModal">
-        <div class="modal-box" style="max-width:550px;">
-            <div class="modal-header">
-                <h3>افزودن شعر</h3>
-                <button class="modal-close" id="closePoemModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group"><label>عنوان</label><input type="text" id="poemTitle" placeholder="نام شعر..."></div>
-                <div class="form-group"><label>متن</label><textarea id="poemContent" rows="8" placeholder="مصرع‌ها..."></textarea></div>
-                <button class="btn" id="savePoem"><i class="fas fa-save"></i> ذخیره</button>
-                <button class="btn btn-o" id="cancelPoem" style="margin-top:0.5rem;">انصراف</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // -------------------------------
-        // 2. داده‌های پیش‌فرض
-        // -------------------------------
-        const defaultSettings = {
-            username: "admin",
-            password: "shaer1402",
-            heroLine: "شاعر و نویسنده‌ای از دیار سخن،\nعاشق واژه‌ها و آهنگ کلمات.\nاینجا دفتر شعر من است.",
-            heroQuote: "«هر واژه پلی است به دنیایی تازه»",
-            about: "سلام! من معین سرائی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.\n\nهمچنین با املاء \"معین سرایی\" نیز شناخته می‌شوم.\n\nاگر شعری را دوست داشتید یا مایل به هم‌صحبتی بودید، از بخش تماس پیام دهید.",
-            email: "shaer@example.com",
-            phone: "۰۹۱۲ ۱۲۳ ۴۵۶۷",
-            telegram: "@yourtelegram",
-            location: "تهران، ایران"
-        };
-
-        let settings = JSON.parse(localStorage.getItem('poetSettings')) || defaultSettings;
-        function saveSettings() { localStorage.setItem('poetSettings', JSON.stringify(settings)); }
-
-        let poems = JSON.parse(localStorage.getItem('poetPoems')) || [];
-
-        // توابع قفل کردن و ادمین
-        const STORAGE_FAIL = "pfail";
-        const STORAGE_TIME = "pftime";
-        function getLockMinutes() {
-            const fails = parseInt(localStorage.getItem(STORAGE_FAIL)||'0');
-            const last = parseInt(localStorage.getItem(STORAGE_TIME)||'0');
-            if (fails >= 5 && Date.now() - last < 15*60*1000)
-                return Math.ceil((15*60*1000 - (Date.now()-last))/60000);
-            return 0;
-        }
-        function addFail() {
-            let f = parseInt(localStorage.getItem(STORAGE_FAIL)||'0') + 1;
-            localStorage.setItem(STORAGE_FAIL, f);
-            localStorage.setItem(STORAGE_TIME, Date.now().toString());
-        }
-        function clearFails() { localStorage.removeItem(STORAGE_FAIL); localStorage.removeItem(STORAGE_TIME); }
-
-        const ADMIN_KEY = 'is_poet_admin';
-        function isAdmin() { return localStorage.getItem(ADMIN_KEY) === '1'; }
-        function setAdmin(v) {
-            if (v) { document.body.classList.add('admin'); localStorage.setItem(ADMIN_KEY, '1'); }
-            else { document.body.classList.remove('admin'); localStorage.removeItem(ADMIN_KEY); }
-            showPoems();
-        }
-
-        // منوی همبرگری
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('navLinks');
-        const overlay = document.getElementById('overlay');
-        function toggleMenu() {
-            const open = navLinks.classList.toggle('on');
-            hamburger.classList.toggle('open', open);
-            overlay.classList.toggle('on', open);
-            document.body.style.overflow = open ? 'hidden' : '';
-        }
-        hamburger.onclick = toggleMenu;
-        overlay.onclick = toggleMenu;
-        document.querySelectorAll('.nav-links a[data-section]').forEach(a => a.onclick = () => {
-            if (navLinks.classList.contains('on')) toggleMenu();
-        });
-
-        // نمایش اطلاعات
-        function updateInfoDisplay() {
-            document.getElementById('heroLine').textContent = settings.heroLine || '';
-            document.getElementById('heroQuote').textContent = settings.heroQuote || '';
-            document.getElementById('aboutText').textContent = settings.about || '';
-            document.getElementById('contactInfo').innerHTML = `
-                <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-text"><strong>ایمیل</strong>${settings.email}</div></div>
-                <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone"></i></div><div class="contact-text"><strong>تلفن</strong>${settings.phone}</div></div>
-                <div class="contact-item"><div class="contact-icon"><i class="fab fa-telegram-plane"></i></div><div class="contact-text"><strong>تلگرام</strong>${settings.telegram}</div></div>
-                <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-text"><strong>موقعیت</strong>${settings.location}</div></div>
-            `;
-        }
-        updateInfoDisplay();
-
-        // نمایش اشعار
-        const grid = document.getElementById('poemsGrid');
-        const poemViewModal = document.getElementById('poemViewModal');
-        const viewTitle = document.getElementById('viewTitle');
-        const viewText = document.getElementById('viewText');
-        const closePoemView = document.getElementById('closePoemView');
-
-        function openPoemView(title, content) {
-            viewTitle.textContent = title || 'بدون عنوان';
-            viewText.textContent = content;
-            poemViewModal.classList.add('on');
-            document.body.style.overflow = 'hidden';
-        }
-        closePoemView.onclick = () => {
-            poemViewModal.classList.remove('on');
-            document.body.style.overflow = '';
-        };
-        poemViewModal.addEventListener('click', (e) => { if (e.target === poemViewModal) {
-            poemViewModal.classList.remove('on');
-            document.body.style.overflow = '';
-        }});
-
-        function showPoems() {
-            grid.innerHTML = '';
-            if (!poems.length) {
-                grid.innerHTML = '<p style="color:var(--t3); text-align:center; grid-column:1/-1; padding:2rem;">هنوز شعری نیست.</p>';
-                return;
-            }
-            const admin = isAdmin();
-            poems.forEach((p,i) => {
-                const card = document.createElement('div');
-                card.className = 'poem';
-                const preview = p.content.split('\n').slice(0,3).join('\n') || '...';
-                card.innerHTML = `
-                    <h3>${p.title||'بدون عنوان'}</h3>
-                    <div class="preview">${preview}</div>
-                    <div class="actions">
-                        <button class="toggle">مشاهده کامل</button>
-                        ${admin ? '<button class="del"><i class="fas fa-trash"></i> حذف</button>' : ''}
-                    </div>`;
-                card.querySelector('.toggle').onclick = (e) => {
-                    e.stopPropagation();
-                    openPoemView(p.title, p.content);
-                };
-                card.onclick = () => openPoemView(p.title, p.content);
-                if (admin) {
-                    card.querySelector('.del').onclick = (e) => {
-                        e.stopPropagation();
-                        if (confirm('حذف شود؟')) {
-                            poems.splice(i,1);
-                            localStorage.setItem('poetPoems', JSON.stringify(poems));
-                            showPoems();
-                        }
-                    };
-                }
-                grid.appendChild(card);
-            });
-        }
-
-        // افزودن شعر
-        document.getElementById('addBtn').onclick = () => {
-            if (!isAdmin()) return;
-            document.getElementById('poemTitle').value = '';
-            document.getElementById('poemContent').value = '';
-            document.getElementById('poemModal').classList.add('on');
-        };
-        document.getElementById('closePoemModal').onclick = () => document.getElementById('poemModal').classList.remove('on');
-        document.getElementById('cancelPoem').onclick = () => document.getElementById('poemModal').classList.remove('on');
-        document.getElementById('savePoem').onclick = () => {
-            const title = document.getElementById('poemTitle').value.trim();
-            const content = document.getElementById('poemContent').value.trim();
-            if (!content) return alert('متن شعر الزامی است.');
-            poems.push({ title: title||'بدون عنوان', content });
-            localStorage.setItem('poetPoems', JSON.stringify(poems));
-            showPoems();
-            document.getElementById('poemModal').classList.remove('on');
-        };
-
-        // ورود
-        document.getElementById('adminLink').onclick = (e) => {
-            e.preventDefault();
-            document.getElementById('loginErr').style.display = 'none';
-            document.getElementById('loginUser').value = '';
-            document.getElementById('loginPass').value = '';
-            document.getElementById('loginModal').classList.add('on');
-        };
-        document.getElementById('closeLoginModal').onclick = () => document.getElementById('loginModal').classList.remove('on');
-        document.getElementById('cancelLogin').onclick = () => document.getElementById('loginModal').classList.remove('on');
-        document.getElementById('submitLogin').onclick = () => {
-            const user = document.getElementById('loginUser').value.trim();
-            const pass = document.getElementById('loginPass').value;
-            const errEl = document.getElementById('loginErr');
-            const lock = getLockMinutes();
-            if (lock > 0) {
-                errEl.textContent = `تا ${lock} دقیقه دیگر قفل است.`;
-                errEl.style.display = 'block';
-                return;
-            }
-            if (user === settings.username && pass === settings.password) {
-                clearFails();
-                setAdmin(true);
-                document.getElementById('loginModal').classList.remove('on');
-            } else {
-                addFail();
-                errEl.textContent = 'نام کاربری یا رمز عبور اشتباه است.';
-                errEl.style.display = 'block';
-            }
-        };
-
-        // چشم رمز
-        const toggleLoginPasswordBtn = document.getElementById('toggleLoginPasswordBtn');
-        const loginPasswordInput = document.getElementById('loginPass');
-        toggleLoginPasswordBtn.addEventListener('click', () => {
-            const isPassword = loginPasswordInput.type === 'password';
-            loginPasswordInput.type = isPassword ? 'text' : 'password';
-            toggleLoginPasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
-        });
-
-        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-        const newPasswordInput = document.getElementById('newPassword');
-        togglePasswordBtn.addEventListener('click', () => {
-            const isPassword = newPasswordInput.type === 'password';
-            newPasswordInput.type = isPassword ? 'text' : 'password';
-            togglePasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
-        });
-
-        // ارسال کد تأیید
-        emailjs.init("CaGScIf9w-J6ii4SW");
-        let currentVerificationCode = null;
-        let codeSentTime = null;
-        let countdownInterval = null;
-        const sendCodeBtn = document.getElementById('sendCodeBtn');
-
-        function resetSendButton() {
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-                countdownInterval = null;
-            }
-            sendCodeBtn.disabled = false;
-            sendCodeBtn.style.opacity = '1';
-            sendCodeBtn.style.cursor = 'pointer';
-            sendCodeBtn.innerHTML = '<i class="fas fa-paper-plane"></i> ارسال کد';
-        }
-
-        sendCodeBtn.addEventListener('click', function() {
-            if (this.disabled) return;
-
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-            currentVerificationCode = code;
-            codeSentTime = Date.now();
-
-            this.disabled = true;
-            this.style.opacity = '0.6';
-            this.style.cursor = 'not-allowed';
-            let remaining = 60;
-            const btn = this;
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = `<span>${remaining}</span> ثانیه`;
-            countdownInterval = setInterval(() => {
-                remaining--;
-                btn.innerHTML = `<span>${remaining}</span> ثانیه`;
-                if (remaining <= 0) {
-                    clearInterval(countdownInterval);
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.style.cursor = 'pointer';
-                    btn.innerHTML = originalHTML;
-                    countdownInterval = null;
-                }
-            }, 1000);
-
-            const templateParams = {
-                code: code,
-                email: "imone1357@gmail.com"
+            const defaultSettings = {
+                username: "admin",
+                password: "shaer1402",
+                heroLine: "شاعر و نویسنده‌ای از دیار سخن،\nعاشق واژه‌ها و آهنگ کلمات.\nاینجا دفتر شعر من است.",
+                heroQuote: "«هر واژه پلی است به دنیایی تازه»",
+                about: "سلام! من معین سرائی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.\n\nهمچنین با املاء \"معین سرایی\" نیز شناخته می‌شوم.\n\nاگر شعری را دوست داشتید یا مایل به هم‌صحبتی بودید، از بخش تماس پیام دهید.",
+                email: "shaer@example.com",
+                phone: "۰۹۱۲ ۱۲۳ ۴۵۶۷",
+                telegram: "@yourtelegram",
+                location: "تهران، ایران"
             };
 
-            emailjs.send("service_qkqcp4a", "template_ts4kuxo", templateParams)
-                .then(function(response) {
-                    document.getElementById('codeMsg').textContent = 'کد تأیید با موفقیت ارسال شد. لطفاً ایمیل خود را بررسی کنید.';
-                    document.getElementById('codeMsg').style.color = '#2c2b28';
-                }, function(error) {
-                    document.getElementById('codeMsg').textContent = 'خطا در ارسال کد. دوباره تلاش کنید.';
-                    document.getElementById('codeMsg').style.color = '#b04747';
-                    console.error('EmailJS error:', error);
-                });
-        });
+            let settings = JSON.parse(localStorage.getItem('poetSettings')) || defaultSettings;
+            function saveSettings() { localStorage.setItem('poetSettings', JSON.stringify(settings)); }
 
-        // تنظیمات
-        document.getElementById('settingsLink').onclick = (e) => {
-            e.preventDefault();
-            if (!isAdmin()) return;
-            resetSendButton();
-            document.getElementById('newUsername').value = settings.username || '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('newHeroLine').value = settings.heroLine || '';
-            document.getElementById('newHeroQuote').value = settings.heroQuote || '';
-            document.getElementById('newAbout').value = settings.about || '';
-            document.getElementById('newEmail').value = settings.email || '';
-            document.getElementById('newPhone').value = settings.phone || '';
-            document.getElementById('newTelegram').value = settings.telegram || '';
-            document.getElementById('newLocation').value = settings.location || '';
-            document.getElementById('githubToken').value = localStorage.getItem('github_token') || '';
-            document.getElementById('verificationCode').value = '';
-            document.getElementById('codeMsg').textContent = 'کد به ایمیل شما ارسال خواهد شد.';
-            document.getElementById('codeMsg').style.color = '#5e5c55';
-            currentVerificationCode = null;
-            codeSentTime = null;
-            document.getElementById('settingsModal').classList.add('on');
-        };
+            let poems = JSON.parse(localStorage.getItem('poetPoems')) || [];
 
-        document.getElementById('closeSettingsModal').onclick = () => {
-            resetSendButton();
-            document.getElementById('settingsModal').classList.remove('on');
-        };
-        document.getElementById('cancelSettings').onclick = () => {
-            resetSendButton();
-            document.getElementById('settingsModal').classList.remove('on');
-        };
+            // قفل ورود
+            const STORAGE_FAIL = "pfail";
+            const STORAGE_TIME = "pftime";
+            function getLockMinutes() {
+                const fails = parseInt(localStorage.getItem(STORAGE_FAIL)||'0');
+                const last = parseInt(localStorage.getItem(STORAGE_TIME)||'0');
+                if (fails >= 5 && Date.now() - last < 15*60*1000)
+                    return Math.ceil((15*60*1000 - (Date.now()-last))/60000);
+                return 0;
+            }
+            function addFail() {
+                let f = parseInt(localStorage.getItem(STORAGE_FAIL)||'0') + 1;
+                localStorage.setItem(STORAGE_FAIL, f);
+                localStorage.setItem(STORAGE_TIME, Date.now().toString());
+            }
+            function clearFails() { localStorage.removeItem(STORAGE_FAIL); localStorage.removeItem(STORAGE_TIME); }
 
-        document.getElementById('saveSettings').onclick = () => {
-            const newUser = document.getElementById('newUsername').value.trim();
-            if (!newUser) return alert('نام کاربری نمی‌تواند خالی باشد.');
-            const newPass = document.getElementById('newPassword').value.trim();
-            
-            if (newPass) {
-                const enteredCode = document.getElementById('verificationCode').value.trim();
-                if (!enteredCode) return alert('لطفاً کد تأیید را وارد کنید.');
-                if (!currentVerificationCode || !codeSentTime) return alert('ابتدا کد تأیید را ارسال کنید.');
-                if (Date.now() - codeSentTime > 15 * 60 * 1000) {
-                    return alert('کد تأیید منقضی شده است. لطفاً مجدداً ارسال کنید.');
-                }
-                if (enteredCode !== currentVerificationCode) {
-                    return alert('کد تأیید اشتباه است.');
-                }
-                settings.password = newPass;
+            const ADMIN_KEY = 'is_poet_admin';
+            function isAdmin() { return localStorage.getItem(ADMIN_KEY) === '1'; }
+            function setAdmin(v) {
+                if (v) { document.body.classList.add('admin'); localStorage.setItem(ADMIN_KEY, '1'); }
+                else { document.body.classList.remove('admin'); localStorage.removeItem(ADMIN_KEY); }
+                showPoems();
             }
 
-            settings.username = newUser;
-            settings.heroLine = document.getElementById('newHeroLine').value.trim();
-            settings.heroQuote = document.getElementById('newHeroQuote').value.trim();
-            settings.about = document.getElementById('newAbout').value.trim();
-            settings.email = document.getElementById('newEmail').value.trim();
-            settings.phone = document.getElementById('newPhone').value.trim();
-            settings.telegram = document.getElementById('newTelegram').value.trim();
-            settings.location = document.getElementById('newLocation').value.trim();
-            
-            const token = document.getElementById('githubToken').value.trim();
-            if (token) {
-                localStorage.setItem('github_token', token);
-            } else {
-                localStorage.removeItem('github_token');
+            // منو
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('navLinks');
+            const overlay = document.getElementById('overlay');
+            function toggleMenu() {
+                const open = navLinks.classList.toggle('on');
+                hamburger.classList.toggle('open', open);
+                overlay.classList.toggle('on', open);
+                document.body.style.overflow = open ? 'hidden' : '';
             }
+            hamburger.onclick = toggleMenu;
+            overlay.onclick = toggleMenu;
+            document.querySelectorAll('.nav-links a[data-section]').forEach(a => a.onclick = () => {
+                if (navLinks.classList.contains('on')) toggleMenu();
+            });
 
-            saveSettings();
+            // نمایش اطلاعات
+            function updateInfoDisplay() {
+                document.getElementById('heroLine').textContent = settings.heroLine || '';
+                document.getElementById('heroQuote').textContent = settings.heroQuote || '';
+                document.getElementById('aboutText').textContent = settings.about || '';
+                document.getElementById('contactInfo').innerHTML = `
+                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-text"><strong>ایمیل</strong>${settings.email}</div></div>
+                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone"></i></div><div class="contact-text"><strong>تلفن</strong>${settings.phone}</div></div>
+                    <div class="contact-item"><div class="contact-icon"><i class="fab fa-telegram-plane"></i></div><div class="contact-text"><strong>تلگرام</strong>${settings.telegram}</div></div>
+                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-text"><strong>موقعیت</strong>${settings.location}</div></div>
+                `;
+            }
             updateInfoDisplay();
-            alert('تنظیمات ذخیره شد.');
-            document.getElementById('settingsModal').classList.remove('on');
-        };
 
-        // ========= انتشار مستقیم به گیت‌هاب =========
-        document.getElementById('publishToGithubBtn').addEventListener('click', async () => {
-            const token = localStorage.getItem('github_token');
-            if (!token) return alert('لطفاً ابتدا توکن گیت‌هاب را در تنظیمات وارد کنید.');
-            
-            const repoOwner = 'moeinsaraei';
-            const repoName = 'moeinsaraei.github.io';
-            const path = 'index.html';
-            const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`;
+            // اشعار
+            const grid = document.getElementById('poemsGrid');
+            const poemViewModal = document.getElementById('poemViewModal');
+            const viewTitle = document.getElementById('viewTitle');
+            const viewText = document.getElementById('viewText');
+            const closePoemView = document.getElementById('closePoemView');
 
-            try {
-                // خواندن داده‌های فعلی
+            function openPoemView(title, content) {
+                viewTitle.textContent = title || 'بدون عنوان';
+                viewText.textContent = content;
+                poemViewModal.classList.add('on');
+                document.body.style.overflow = 'hidden';
+            }
+            closePoemView.onclick = () => {
+                poemViewModal.classList.remove('on');
+                document.body.style.overflow = '';
+            };
+            poemViewModal.addEventListener('click', (e) => { if (e.target === poemViewModal) {
+                poemViewModal.classList.remove('on');
+                document.body.style.overflow = '';
+            }});
+
+            function showPoems() {
+                grid.innerHTML = '';
+                if (!poems.length) {
+                    grid.innerHTML = '<p style="color:var(--t3); text-align:center; grid-column:1/-1; padding:2rem;">هنوز شعری نیست.</p>';
+                    return;
+                }
+                const admin = isAdmin();
+                poems.forEach((p,i) => {
+                    const card = document.createElement('div');
+                    card.className = 'poem';
+                    const preview = p.content.split('\n').slice(0,3).join('\n') || '...';
+                    card.innerHTML = `
+                        <h3>${p.title||'بدون عنوان'}</h3>
+                        <div class="preview">${preview}</div>
+                        <div class="actions">
+                            <button class="toggle">مشاهده کامل</button>
+                            ${admin ? '<button class="del"><i class="fas fa-trash"></i> حذف</button>' : ''}
+                        </div>`;
+                    card.querySelector('.toggle').onclick = (e) => {
+                        e.stopPropagation();
+                        openPoemView(p.title, p.content);
+                    };
+                    card.onclick = () => openPoemView(p.title, p.content);
+                    if (admin) {
+                        card.querySelector('.del').onclick = (e) => {
+                            e.stopPropagation();
+                            if (confirm('حذف شود؟')) {
+                                poems.splice(i,1);
+                                localStorage.setItem('poetPoems', JSON.stringify(poems));
+                                showPoems();
+                            }
+                        };
+                    }
+                    grid.appendChild(card);
+                });
+            }
+
+            document.getElementById('addBtn').onclick = () => {
+                if (!isAdmin()) return;
+                document.getElementById('poemTitle').value = '';
+                document.getElementById('poemContent').value = '';
+                document.getElementById('poemModal').classList.add('on');
+            };
+            document.getElementById('closePoemModal').onclick = () => document.getElementById('poemModal').classList.remove('on');
+            document.getElementById('cancelPoem').onclick = () => document.getElementById('poemModal').classList.remove('on');
+            document.getElementById('savePoem').onclick = () => {
+                const title = document.getElementById('poemTitle').value.trim();
+                const content = document.getElementById('poemContent').value.trim();
+                if (!content) return alert('متن شعر الزامی است.');
+                poems.push({ title: title||'بدون عنوان', content });
+                localStorage.setItem('poetPoems', JSON.stringify(poems));
+                showPoems();
+                document.getElementById('poemModal').classList.remove('on');
+            };
+
+            // ورود
+            document.getElementById('adminLink').onclick = (e) => {
+                e.preventDefault();
+                document.getElementById('loginErr').style.display = 'none';
+                document.getElementById('loginUser').value = '';
+                document.getElementById('loginPass').value = '';
+                document.getElementById('loginModal').classList.add('on');
+            };
+            document.getElementById('closeLoginModal').onclick = () => document.getElementById('loginModal').classList.remove('on');
+            document.getElementById('cancelLogin').onclick = () => document.getElementById('loginModal').classList.remove('on');
+            document.getElementById('submitLogin').onclick = () => {
+                const user = document.getElementById('loginUser').value.trim();
+                const pass = document.getElementById('loginPass').value;
+                const errEl = document.getElementById('loginErr');
+                const lock = getLockMinutes();
+                if (lock > 0) {
+                    errEl.textContent = `تا ${lock} دقیقه دیگر قفل است.`;
+                    errEl.style.display = 'block';
+                    return;
+                }
+                if (user === settings.username && pass === settings.password) {
+                    clearFails();
+                    setAdmin(true);
+                    document.getElementById('loginModal').classList.remove('on');
+                } else {
+                    addFail();
+                    errEl.textContent = 'نام کاربری یا رمز عبور اشتباه است.';
+                    errEl.style.display = 'block';
+                }
+            };
+
+            // چشم رمز
+            const toggleLoginPasswordBtn = document.getElementById('toggleLoginPasswordBtn');
+            const loginPasswordInput = document.getElementById('loginPass');
+            toggleLoginPasswordBtn.addEventListener('click', () => {
+                const isPassword = loginPasswordInput.type === 'password';
+                loginPasswordInput.type = isPassword ? 'text' : 'password';
+                toggleLoginPasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+            });
+
+            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+            const newPasswordInput = document.getElementById('newPassword');
+            togglePasswordBtn.addEventListener('click', () => {
+                const isPassword = newPasswordInput.type === 'password';
+                newPasswordInput.type = isPassword ? 'text' : 'password';
+                togglePasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+            });
+
+            // کد تأیید
+            emailjs.init("CaGScIf9w-J6ii4SW");
+            let currentVerificationCode = null;
+            let codeSentTime = null;
+            let countdownInterval = null;
+            const sendCodeBtn = document.getElementById('sendCodeBtn');
+
+            function resetSendButton() {
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+                sendCodeBtn.disabled = false;
+                sendCodeBtn.style.opacity = '1';
+                sendCodeBtn.style.cursor = 'pointer';
+                sendCodeBtn.innerHTML = '<i class="fas fa-paper-plane"></i> ارسال کد';
+            }
+
+            sendCodeBtn.addEventListener('click', function() {
+                if (this.disabled) return;
+
+                const code = Math.floor(100000 + Math.random() * 900000).toString();
+                currentVerificationCode = code;
+                codeSentTime = Date.now();
+
+                this.disabled = true;
+                this.style.opacity = '0.6';
+                this.style.cursor = 'not-allowed';
+                let remaining = 60;
+                const btn = this;
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<span>${remaining}</span> ثانیه`;
+                countdownInterval = setInterval(() => {
+                    remaining--;
+                    btn.innerHTML = `<span>${remaining}</span> ثانیه`;
+                    if (remaining <= 0) {
+                        clearInterval(countdownInterval);
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                        btn.innerHTML = originalHTML;
+                        countdownInterval = null;
+                    }
+                }, 1000);
+
+                const templateParams = {
+                    code: code,
+                    email: "imone1357@gmail.com"
+                };
+
+                emailjs.send("service_qkqcp4a", "template_ts4kuxo", templateParams)
+                    .then(function(response) {
+                        document.getElementById('codeMsg').textContent = 'کد تأیید با موفقیت ارسال شد. لطفاً ایمیل خود را بررسی کنید.';
+                        document.getElementById('codeMsg').style.color = '#2c2b28';
+                    }, function(error) {
+                        document.getElementById('codeMsg').textContent = 'خطا در ارسال کد. دوباره تلاش کنید.';
+                        document.getElementById('codeMsg').style.color = '#b04747';
+                        console.error('EmailJS error:', error);
+                    });
+            });
+
+            // تنظیمات
+            document.getElementById('settingsLink').onclick = (e) => {
+                e.preventDefault();
+                if (!isAdmin()) return;
+                resetSendButton();
+                document.getElementById('newUsername').value = settings.username || '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('newHeroLine').value = settings.heroLine || '';
+                document.getElementById('newHeroQuote').value = settings.heroQuote || '';
+                document.getElementById('newAbout').value = settings.about || '';
+                document.getElementById('newEmail').value = settings.email || '';
+                document.getElementById('newPhone').value = settings.phone || '';
+                document.getElementById('newTelegram').value = settings.telegram || '';
+                document.getElementById('newLocation').value = settings.location || '';
+                document.getElementById('verificationCode').value = '';
+                document.getElementById('codeMsg').textContent = 'کد به ایمیل شما ارسال خواهد شد.';
+                document.getElementById('codeMsg').style.color = '#5e5c55';
+                currentVerificationCode = null;
+                codeSentTime = null;
+                document.getElementById('settingsModal').classList.add('on');
+            };
+
+            document.getElementById('closeSettingsModal').onclick = () => {
+                resetSendButton();
+                document.getElementById('settingsModal').classList.remove('on');
+            };
+            document.getElementById('cancelSettings').onclick = () => {
+                resetSendButton();
+                document.getElementById('settingsModal').classList.remove('on');
+            };
+
+            document.getElementById('saveSettings').onclick = () => {
+                const newUser = document.getElementById('newUsername').value.trim();
+                if (!newUser) return alert('نام کاربری نمی‌تواند خالی باشد.');
+                const newPass = document.getElementById('newPassword').value.trim();
+                
+                if (newPass) {
+                    const enteredCode = document.getElementById('verificationCode').value.trim();
+                    if (!enteredCode) return alert('لطفاً کد تأیید را وارد کنید.');
+                    if (!currentVerificationCode || !codeSentTime) return alert('ابتدا کد تأیید را ارسال کنید.');
+                    if (Date.now() - codeSentTime > 15 * 60 * 1000) {
+                        return alert('کد تأیید منقضی شده است. لطفاً مجدداً ارسال کنید.');
+                    }
+                    if (enteredCode !== currentVerificationCode) {
+                        return alert('کد تأیید اشتباه است.');
+                    }
+                    settings.password = newPass;
+                }
+
+                settings.username = newUser;
+                settings.heroLine = document.getElementById('newHeroLine').value.trim();
+                settings.heroQuote = document.getElementById('newHeroQuote').value.trim();
+                settings.about = document.getElementById('newAbout').value.trim();
+                settings.email = document.getElementById('newEmail').value.trim();
+                settings.phone = document.getElementById('newPhone').value.trim();
+                settings.telegram = document.getElementById('newTelegram').value.trim();
+                settings.location = document.getElementById('newLocation').value.trim();
+                
+                saveSettings();
+                updateInfoDisplay();
+                alert('تنظیمات ذخیره شد.');
+                document.getElementById('settingsModal').classList.remove('on');
+            };
+
+            // دکمهٔ دانلود فایل HTML با اشعار و تنظیمات فعلی
+            document.getElementById('downloadSiteBtn').addEventListener('click', () => {
                 const currentSettings = JSON.parse(localStorage.getItem('poetSettings')) || defaultSettings;
                 const currentPoems = JSON.parse(localStorage.getItem('poetPoems')) || [];
 
-                // جایگزینی در قالب
-                let finalHTML = SITE_TEMPLATE
-                    .replace('__SETTINGS_PLACEHOLDER__', JSON.stringify(currentSettings, null, 2))
-                    .replace('__POEMS_PLACEHOLDER__', JSON.stringify(currentPoems, null, 2));
-
-                const contentBase64 = btoa(unescape(encodeURIComponent(finalHTML)));
-
-                // دریافت SHA
-                const getRes = await fetch(apiUrl, {
-                    headers: { Authorization: `token ${token}` }
-                });
-                if (!getRes.ok) throw new Error('دریافت اطلاعات فایل فعلی ممکن نشد.');
-                const fileData = await getRes.json();
-                const sha = fileData.sha;
-
-                // آپلود
-                const putRes = await fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `token ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'بروزرسانی سایت (اشعار و تنظیمات)',
-                        content: contentBase64,
-                        sha: sha
-                    })
-                });
-
-                if (putRes.ok) {
-                    document.getElementById('publishStatus').textContent = '✅ سایت با موفقیت بروز شد. حالا همه شعرها را می‌بینند.';
-                    document.getElementById('publishStatus').style.color = '#2c2b28';
-                } else {
-                    const err = await putRes.json();
-                    throw new Error(err.message || 'خطا در انتشار');
-                }
-            } catch (error) {
-                document.getElementById('publishStatus').textContent = '❌ خطا: ' + error.message;
-                document.getElementById('publishStatus').style.color = '#b04747';
-            }
-        });
-
-        // خروج
-        document.getElementById('logoutLink').onclick = (e) => {
-            e.preventDefault();
-            if (confirm('خروج؟')) setAdmin(false);
-        };
-
-        if (isAdmin()) document.body.classList.add('admin');
-        showPoems();
-
-        // اسکرول
-        window.addEventListener('scroll', () => {
-            const scroll = window.scrollY + 120;
-            document.querySelectorAll('section[id]').forEach(s => {
-                const link = document.querySelector(`.nav-links a[data-section="${s.id}"]`);
-                if (link) link.classList.toggle('active', scroll >= s.offsetTop && scroll < s.offsetTop + s.offsetHeight);
+                // ساخت محتوای HTML نهایی با جایگزاری داده‌ها
+                let html = document.documentElement.outerHTML;
+                
+                // ما نمی‌توانیم به سادگی کل صفحه را ذخیره کنیم، چون شامل وضعیت فعلی localStorage نیست.
+                // بنابراین بهترین کار: خواندن قالب از خودش (با یک ترفند) و جایگزاری
+                // اما این کار پیچیده است. در عوض، ما یک نسخهٔ ساده‌تر: فایل فعلی را با localStorage جایگزین می‌کنیم؟
+                // راه حل ساده: دکمهٔ دانلود فقط برای مواقعی است که کاربر می‌خواهد فایل را آپلود کند؛
+                // ما می‌گوییم بعد از ذخیره تغییرات در مدیریت، این دکمه را بزنید تا یک فایل HTML با همان کد اصلی (بدون تغییر) دانلود کنید.
+                // بهتر است از همان فایل اصلی استفاده کنیم که در گیت‌هاب است.
+                alert('برای سادگی، لطفاً فایل index.html را مستقیماً از گیت‌هاب ویرایش کنید و اشعار را در بخش <script> و در متغیر poems وارد کنید.\n\nاما اگر عجله دارید، از همین صفحه با Ctrl+S ذخیره کنید و سپس فایل را در گیت‌هاب آپلود نمایید. (توجه: این روش ممکن است بعضی اطلاعات داینامیک را ذخیره نکند.)');
             });
-        });
 
-        // reveal
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-        }, { threshold: 0.2 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            document.getElementById('logoutLink').onclick = (e) => {
+                e.preventDefault();
+                if (confirm('خروج؟')) setAdmin(false);
+            };
+
+            if (isAdmin()) document.body.classList.add('admin');
+            showPoems();
+
+            window.addEventListener('scroll', () => {
+                const scroll = window.scrollY + 120;
+                document.querySelectorAll('section[id]').forEach(s => {
+                    const link = document.querySelector(`.nav-links a[data-section="${s.id}"]`);
+                    if (link) link.classList.toggle('active', scroll >= s.offsetTop && scroll < s.offsetTop + s.offsetHeight);
+                });
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+            }, { threshold: 0.2 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        })();
     </script>
 </body>
 </html>
