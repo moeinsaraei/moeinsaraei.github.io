@@ -360,8 +360,10 @@
         <div class="section">
             <div class="hero-content">
                 <h1 class="hero-name">معین <span>سرائی</span></h1>
-                <div class="hero-line" id="heroLine"></div>
-                <div class="hero-quote" id="heroQuote"></div>
+                <div class="hero-line" id="heroLine">نغمه های زندگانی در بند بند وجود کلمات نهفته است ؛
+با ادبیات میتوان موسیقی امید را بر پیکر بی روح سرنوشت نواخت و بر این جهان
+سراسر معنا نوید بخش درکی تازه داد</div>
+                <div class="hero-quote" id="heroQuote">«هر واژه بازیگر نمایش بی روح زندگانیست»</div>
             </div>
         </div>
     </section>
@@ -376,13 +378,19 @@
 
     <section class="section reveal" id="about">
         <h2 class="section-title">درباره من</h2>
-        <div class="about-text" id="aboutText"></div>
+        <div class="about-text" id="aboutText">سلام! من معین سرایی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.
+اگر شعری را دوست داشتید یا مایل به هم‌صحبتی بودید، از بخش تماس پیام دهید.</div>
     </section>
 
     <section class="section reveal" id="contact">
         <h2 class="section-title">با من در میان بگذارید</h2>
         <div class="contact-flex">
-            <div class="contact-info" id="contactInfo"></div>
+            <div class="contact-info" id="contactInfo">
+                <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-text"><strong>ایمیل</strong>moeinsaraei@gmail.com</div></div>
+                <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone"></i></div><div class="contact-text"><strong>تلفن</strong>09391339507</div></div>
+                <div class="contact-item"><div class="contact-icon"><i class="fab fa-telegram-plane"></i></div><div class="contact-text"><strong>تلگرام</strong>@TheEndOfTheSpectacle</div></div>
+                <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-text"><strong>موقعیت</strong>خراسان رضوی، قوچان</div></div>
+            </div>
             <form class="contact-form" action="https://formsubmit.co/moeinsaraei@gmail.com" method="POST">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_next" value="">
@@ -467,14 +475,8 @@
                 <div class="form-group"><label>تلفن</label><input type="text" id="newPhone"></div>
                 <div class="form-group"><label>تلگرام</label><input type="text" id="newTelegram" placeholder="آیدی یا لینک"></div>
                 <div class="form-group"><label>موقعیت</label><input type="text" id="newLocation"></div>
-                
                 <button class="btn" id="saveSettings"><i class="fas fa-save"></i> ذخیره تغییرات</button>
                 <button class="btn btn-o" id="cancelSettings" style="margin-top:0.5rem;">انصراف</button>
-
-                <button class="btn" id="downloadFullSiteBtn" style="margin-top:1rem; background:#2c2b28;">
-                    <i class="fas fa-download"></i> دریافت فایل نهایی
-                </button>
-                <p id="downloadStatus" style="margin-top:0.5rem; font-size:0.8rem; color:var(--t2);">پس از کلیک، فایل را در گیت‌هاب آپلود کن.</p>
             </div>
         </div>
     </div>
@@ -496,23 +498,59 @@
 
     <script>
         (function() {
-            // ---------- تنظیمات پیش‌فرض ----------
+            // ---------- تنظیمات پیش‌فرض (در صورت نیاز به ریست) ----------
             const defaultSettings = {
                 username: "admin",
                 password: "shaer1402",
-                heroLine: "شاعر و نویسنده‌ای از دیار سخن،\nعاشق واژه‌ها و آهنگ کلمات.\nاینجا دفتر شعر من است.",
-                heroQuote: "«هر واژه پلی است به دنیایی تازه»",
-                about: "سلام! من معین سرائی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.\n\nهمچنین با املاء \"معین سرایی\" نیز شناخته می‌شوم.\n\nاگر شعری را دوست داشتید یا مایل به هم‌صحبتی بودید، از بخش تماس پیام دهید.",
-                email: "shaer@example.com",
-                phone: "۰۹۱۲ ۱۲۳ ۴۵۶۷",
-                telegram: "@yourtelegram",
-                location: "تهران، ایران"
+                heroLine: "نغمه های زندگانی در بند بند وجود کلمات نهفته است ؛\nبا ادبیات میتوان موسیقی امید را بر پیکر بی روح سرنوشت نواخت و بر این جهان\nسراسر معنا نوید بخش درکی تازه داد",
+                heroQuote: "«هر واژه بازیگر نمایش بی روح زندگانیست»",
+                about: "سلام! من معین سرایی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.\n\nاگر شعری را دوست داشتید یا مایل به هم‌صحبتی بودید، از بخش تماس پیام دهید.",
+                email: "moeinsaraei@gmail.com",
+                phone: "09391339507",
+                telegram: "@TheEndOfTheSpectacle",
+                location: "خراسان رضوی، قوچان"
             };
 
             let settings = JSON.parse(localStorage.getItem('poetSettings')) || defaultSettings;
             function saveSettings() { localStorage.setItem('poetSettings', JSON.stringify(settings)); }
 
-            let poems = JSON.parse(localStorage.getItem('poetPoems')) || [];
+            // ---------- اشعار پیش‌فرض (جدیدترین اول) ----------
+            const defaultPoems = [
+                {
+                    title: "شب تار",
+                    content: "شب تار است و دلم محفل آوارگی است\nساقیا رند زمان تشنه به میخوارگی است\nمی ما را به جفای غم ایام بریز\nکه فلک هر جهتش ختم به بیچارگی است\nعاقلان را جنم عشق به معشوق که نیست\nآنکه دل را بدهد ظن به دیوانگی است\nبه غزل من قسمت می دهم از دوری تو\nدل ما در قفس عشق به آزادگی است"
+                },
+                {
+                    title: "سودای تن",
+                    content: "مست و خرابان غمت در پس سودای تنت\nعاشق بی چاره منم زائر کوی حرمت\nگم شده شعر منی شاعر بی شعر منم\nجان به لبم چیره شده در تب و تاب خبرت\nمرده بدم تا که لبم شد به لبان تو گره\nمعجزه قرن شدش سرخی جان بخش لبت\nزلف پریشان تو را جامه شده باد صبا\nمی وزد و این دل من زنده به ساز نفست\nدر قفس عشق تو می پوسد و آواره شده\nاین دل مجنون شده از قوس کمان کمرت\nجلوه مهتابی و من غرق نگاه تو شدم\nشد نظرم محو به زیبایی نور قمرت\nبی وطن آواره بدم در بر هستی خودم\nتا که پناهنده شدم من به جوار وطنت"
+                },
+                {
+                    title: "نظر",
+                    content: "گفتم نظری بر نظر ما بنما دوست\nگفتا نظری دارم و این دل نظرش اوست"
+                },
+                {
+                    title: "بودن تو",
+                    content: "فلسفه بودن تو درد غریبیست مرا\nهستی و در هستی من نیست وجودت به سرا"
+                },
+                {
+                    title: "بوسه",
+                    content: "بوسه بر زلف پریشانت زنم\nجسم بی جانم در آغوشت نهم\nصادقانه عاشقانه بی بدیل\nتا ابد محو تماشایت شوم"
+                },
+                {
+                    title: "شهد شیرین",
+                    content: "شهد شیرین شرابم بی تو تلخ است این شبانم\nهمچو شمعی در فراق شعله نور جهانم\nگر بخواهم من که ابیاتی سرایم در قبالت\nاز جمال لعل عشقت ناتوان است این زبانم"
+                },
+                {
+                    title: "هیچ",
+                    content: "گفت زندگی بجز هیچش ، محال در نگاهم\nگفتمش که هیچ هیچم بلکه او شود وصالم"
+                },
+                {
+                    title: "باران",
+                    content: "ای که بی رویت دلم یاد خزان را می کند\nساز اندوهم قصاص روح و جان را می کند\nگر توانی یک نظر در کار ما کن لعبتم\nخاطرم چون دشت خشکی سوی باران می کند"
+                }
+            ];
+
+            let poems = JSON.parse(localStorage.getItem('poetPoems')) || defaultPoems;
 
             const STORAGE_FAIL = "pfail";
             const STORAGE_TIME = "pftime";
@@ -636,7 +674,7 @@
                 const title = document.getElementById('poemTitle').value.trim();
                 const content = document.getElementById('poemContent').value.trim();
                 if (!content) return alert('متن شعر الزامی است.');
-                poems.push({ title: title||'بدون عنوان', content });
+                poems.unshift({ title: title||'بدون عنوان', content });
                 localStorage.setItem('poetPoems', JSON.stringify(poems));
                 showPoems();
                 document.getElementById('poemModal').classList.remove('on');
@@ -810,75 +848,6 @@
                 alert('تنظیمات ذخیره شد.');
                 document.getElementById('settingsModal').classList.remove('on');
             };
-
-            // ---------- دانلود فایل کامل (نسخهٔ جادویی) ----------
-            document.getElementById('downloadFullSiteBtn').addEventListener('click', function() {
-                // 1. دریافت کل HTML صفحه
-                const fullHTML = document.documentElement.outerHTML;
-                
-                // 2. تبدیل به یک Document موقت برای دستکاری امن
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(fullHTML, 'text/html');
-                
-                // 3. پیدا کردن تگ اسکریپتی که تنظیمات پیش‌فرض را دارد
-                const scripts = doc.querySelectorAll('script');
-                let targetScript = null;
-                for (let script of scripts) {
-                    if (script.textContent.includes('const defaultSettings = {')) {
-                        targetScript = script;
-                        break;
-                    }
-                }
-                
-                if (!targetScript) {
-                    alert('خطا: اسکریپت اصلی پیدا نشد.');
-                    return;
-                }
-                
-                // 4. خواندن داده‌های فعلی
-                const currentSettings = JSON.parse(localStorage.getItem('poetSettings')) || defaultSettings;
-                const currentPoems = JSON.parse(localStorage.getItem('poetPoems')) || [];
-                
-                // 5. جایگزینی داده‌ها در اسکریپت
-                let scriptContent = targetScript.textContent;
-                
-                // جایگزینی defaultSettings
-                scriptContent = scriptContent.replace(
-                    /const defaultSettings = \{[\s\S]*?\};/,
-                    `const defaultSettings = ${JSON.stringify(currentSettings, null, 2)};`
-                );
-                
-                // اضافه کردن آرایهٔ اشعار به عنوان مقدار پیش‌فرض در صورت نبودن
-                // اول ببینیم آیا خطی مثل let poems = JSON.parse(...) وجود دارد
-                // ما می‌خواهیم آن را تبدیل کنیم به let poems = JSON.parse(localStorage.getItem('poetPoems')) || defaultPoems;
-                // که defaultPoems را تعریف نکردیم. پس باید قبل از آن تعریف کنیم.
-                // راه ساده‌تر: قبل از خط let poems = ... یک خط اضافه کنیم:
-                scriptContent = scriptContent.replace(
-                    /let poems = JSON\.parse\(localStorage\.getItem\('poetPoems'\)\) \|\| \[\]/,
-                    `const defaultPoems = ${JSON.stringify(currentPoems, null, 2)};\nlet poems = JSON.parse(localStorage.getItem('poetPoems')) || defaultPoems`
-                );
-                
-                targetScript.textContent = scriptContent;
-                
-                // 6. استخراج HTML نهایی
-                const finalHTML = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
-                
-                // 7. دانلود
-                const blob = new Blob([finalHTML], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'index.html';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                document.getElementById('downloadStatus').textContent = '✅ فایل کامل با شعرها و تنظیمات دانلود شد.';
-                setTimeout(() => {
-                    document.getElementById('downloadStatus').textContent = 'پس از کلیک، فایل را در گیت‌هاب جایگزین کن.';
-                }, 4000);
-            });
 
             document.getElementById('logoutLink').onclick = (e) => {
                 e.preventDefault();
