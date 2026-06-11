@@ -1,4 +1,6 @@
-<html lang="fa" dir="rtl"><head>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>معین سرائی (معین سرایی) | دفتر شعر</title>
@@ -21,11 +23,11 @@
     }
     </script>
 
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-    <style>body { margin: 0; }</style><style>
+    <style>
         :root {
             --bg: #fbfaf7;
             --bg2: #fff;
@@ -401,126 +403,59 @@
         }
     </style>
 </head>
-<body style="overflow: hidden;" class="admin">
+<body>
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#home" class="nav-logo"><span>دفتر</span> شعر</a>
-            <button class="hamburger open" id="hamburger" aria-label="منو"><span></span><span></span><span></span></button>
-            <ul class="nav-links on" id="navLinks">
-                <li><a href="#home" data-section="home" class=""><i class="fas fa-home"></i> خانه</a></li>
-                <li><a href="#poems" data-section="poems" class=""><i class="fas fa-feather-alt"></i> شعرها</a></li>
-                <li><a href="#about" data-section="about" class=""><i class="fas fa-user"></i> درباره من</a></li>
-                <li><a href="#contact" data-section="contact" class="active"><i class="fas fa-envelope"></i> تماس</a></li>
+            <button class="hamburger" id="hamburger" aria-label="منو"><span></span><span></span><span></span></button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" data-section="home" class="active"><i class="fas fa-home"></i> خانه</a></li>
+                <li><a href="#poems" data-section="poems"><i class="fas fa-feather-alt"></i> شعرها</a></li>
+                <li><a href="#about" data-section="about"><i class="fas fa-user"></i> درباره من</a></li>
+                <li><a href="#contact" data-section="contact"><i class="fas fa-envelope"></i> تماس</a></li>
                 <li><a class="admin-link" id="adminLink"><i class="fas fa-feather-alt"></i> ورود شاعر</a></li>
                 <li><a class="settings-link" id="settingsLink"><i class="fas fa-cog"></i> تنظیمات</a></li>
                 <li><a class="logout-link" id="logoutLink"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
             </ul>
         </div>
     </nav>
-    <div class="overlay on" id="overlay"></div>
+    <div class="overlay" id="overlay"></div>
 
     <section class="hero" id="home">
         <div class="section">
             <div class="hero-content">
                 <h1 class="hero-name">معین <span>سرائی</span></h1>
                 <div class="hero-line" id="heroLine">نغمه های زندگانی در بند بند وجود کلمات نهفته است ؛
-با ادبیات میتوان موسیقی امید را بر پیکر بی روح سرنوشت نواخت و بر این جهان 
-سراسر معنا نوید بخش درکی تازه بود .</div>
-                <div class="hero-quote" id="heroQuote">«هر واژه بازیگر نمایش بی روح زندگانیست »</div>
+با ادبیات میتوان موسیقی امید را بر پیکر بی روح سرنوشت نواخت و بر این جهان
+سراسر معنا نوید بخش درکی تازه داد.</div>
+                <div class="hero-quote" id="heroQuote">«هر واژه بازیگر نمایش بی روح زندگانیست»</div>
             </div>
         </div>
     </section>
 
-    <section class="section reveal visible" id="poems">
+    <section class="section reveal" id="poems">
         <h2 class="section-title">آخرین سروده‌ها</h2>
         <div class="poems-box">
-            <div class="poems-grid" id="poemsGrid"><div class="poem">
-                        <h3>شب تار</h3>
-                        <div class="preview">شب تار است و دلم محفل آوارگی است 
-ساقیا رند زمان تشنه به میخوارگی است 
-می ما را به جفای غم ایام بریز </div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            <button class="del"><i class="fas fa-trash"></i> حذف</button>
-                        </div></div><div class="poem">
-                        <h3>سودای تن</h3>
-                        <div class="preview">مست و خرابان غمت در پس سودای تنت 
-عاشق بی چاره منم زائر کوی حرمت 
-گم شده شعر منی شاعر بی شعر منم </div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            <button class="del"><i class="fas fa-trash"></i> حذف</button>
-                        </div></div><div class="poem">
-                        <h3>نظر</h3>
-                        <div class="preview">گفتم نظری بر نظر ما بنما دوست 
-گفتا نظری دارم و این دل نظرش اوست</div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            <button class="del"><i class="fas fa-trash"></i> حذف</button>
-                        </div></div><div class="poem">
-                        <h3>بودن تو</h3>
-                        <div class="preview">فلسفه بودن تو درد غریبیست مرا 
-هستی و در هستی من نیست وجودت به سرا</div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            <button class="del"><i class="fas fa-trash"></i> حذف</button>
-                        </div></div><div class="poem">
-                        <h3>بوسه</h3>
-                        <div class="preview">بوسه بر زلف پریشانت زنم 
-جسم بی جانم در آغوشت نهم 
-صادقانه عاشقانه بی بدیل </div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            <button class="del"><i class="fas fa-trash"></i> حذف</button>
-                        </div></div><div class="poem">
-                        <h3>شهد شیرین</h3>
-                        <div class="preview">شهد شیرین شرابم بی تو تلخ  است این شبانم 
-همچو شمعی در فراق شعله نور جهانم 
-گر بخواهم من که ابیاتی سرایم در قبالت </div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            <button class="del"><i class="fas fa-trash"></i> حذف</button>
-                        </div></div><div class="poem">
-                        <h3>هیچ</h3>
-                        <div class="preview">گفت زندگی بجز هیچش ، محال در نگاهم 
-گفتمش که هیچ هیچم بلکه او شود وصالم</div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            <button class="del"><i class="fas fa-trash"></i> حذف</button>
-                        </div></div><div class="poem">
-                        <h3>باران</h3>
-                        <div class="preview">ای که بی رویت دلم یاد خزان را می کند 
-ساز اندوهم قصاص روح و جان را می کند 
-گر توانی یک نظر در کار ما کن لعبتم</div>
-                        <div class="actions">
-                            <button class="toggle">مشاهده کامل</button>
-                            <button class="del"><i class="fas fa-trash"></i> حذف</button>
-                        </div></div></div>
+            <div class="poems-grid" id="poemsGrid"></div>
             <div class="add-btn hidden" id="addBtn"><i class="fas fa-plus-circle"></i> افزودن شعر جدید</div>
         </div>
     </section>
 
-    <section class="section reveal visible" id="about">
+    <section class="section reveal" id="about">
         <h2 class="section-title">درباره من</h2>
-        <div class="about-text" id="aboutText">سلام! من معین سرایی هستم، شاعر و علاقه‌مند به ادبیات فارسی. از کودکی با شعر مأنوس بوده‌ام و واژه‌ها برایم مثل نغمه‌های آشنا هستند. در این دفتر مجازی، برخی از سروده‌هایم را با شما به اشتراک می‌گذارم.
-اگر شعری را دوست داشتید یا مایل به هم‌صحبتی بودید، از بخش تماس پیام دهید.</div>
+        <div class="about-text" id="aboutText"></div>
     </section>
 
-    <section class="section reveal visible" id="contact">
+    <section class="section reveal" id="contact">
         <h2 class="section-title">با من در میان بگذارید</h2>
         <div class="contact-flex">
-            <div class="contact-info" id="contactInfo">
-                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-text"><strong>ایمیل</strong>moeinsaraei@gmail.com</div></div>
-                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone"></i></div><div class="contact-text"><strong>تلفن</strong>09391339507</div></div>
-                    <div class="contact-item"><div class="contact-icon"><i class="fab fa-telegram-plane"></i></div><div class="contact-text"><strong>تلگرام</strong>@TheEndOfTheSpectacle</div></div>
-                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-text"><strong>موقعیت</strong>خراسان رضوی، قوچان</div></div>
-                </div>
+            <div class="contact-info" id="contactInfo"></div>
             <form class="contact-form" action="https://formsubmit.co/moeinsaraei@gmail.com" method="POST">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_next" value="https://moeinsaraei.github.io/?sent=1">
-                <div class="form-group"><label>نام شما</label><input type="text" name="name" placeholder="نام و نام خانوادگی" required=""></div>
-                <div class="form-group"><label>ایمیل</label><input type="email" name="email" placeholder="your@email.com" required=""></div>
-                <div class="form-group"><label>پیام</label><textarea name="message" rows="4" placeholder="سلام!..." required=""></textarea></div>
+                <div class="form-group"><label>نام شما</label><input type="text" name="name" placeholder="نام و نام خانوادگی" required></div>
+                <div class="form-group"><label>ایمیل</label><input type="email" name="email" placeholder="your@email.com" required></div>
+                <div class="form-group"><label>پیام</label><textarea name="message" rows="4" placeholder="سلام!..." required></textarea></div>
                 <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> ارسال</button>
             </form>
         </div>
@@ -535,7 +470,7 @@
 
     <div class="poem-view-modal" id="poemViewModal">
         <div class="poem-view-content">
-            <button class="poem-view-close" id="closePoemView">×</button>
+            <button class="poem-view-close" id="closePoemView">&times;</button>
             <h2 class="poem-view-title" id="viewTitle"></h2>
             <div class="poem-view-text" id="viewText"></div>
         </div>
@@ -550,12 +485,11 @@
         </div>
     </div>
 
-    <!-- مدال‌های مدیریت -->
     <div class="modal" id="loginModal">
         <div class="modal-box">
             <div class="modal-header">
                 <h3>ورود شاعر</h3>
-                <button class="modal-close" id="closeLoginModal">×</button>
+                <button class="modal-close" id="closeLoginModal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-icon"><i class="fas fa-feather-alt"></i></div>
@@ -563,8 +497,10 @@
                 <div class="form-group">
                     <label>رمز عبور</label>
                     <div class="password-wrapper">
-                        <input type="text" id="loginPass" placeholder="رمز عبور">
-                        <button class="toggle-password" id="toggleLoginPasswordBtn" type="button"><i class="fas fa-eye-slash"></i></button>
+                        <input type="password" id="loginPass" placeholder="رمز عبور">
+                        <button class="toggle-password" id="toggleLoginPasswordBtn" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
                 </div>
                 <p id="loginErr" style="color:#b04747;margin:0.5rem 0;display:none;"></p>
@@ -574,11 +510,11 @@
         </div>
     </div>
 
-    <div class="modal on" id="settingsModal">
+    <div class="modal" id="settingsModal">
         <div class="modal-box">
             <div class="modal-header">
                 <h3>تنظیمات مدیریت</h3>
-                <button class="modal-close" id="closeSettingsModal">×</button>
+                <button class="modal-close" id="closeSettingsModal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-icon"><i class="fas fa-cog"></i></div>
@@ -596,9 +532,9 @@
                     <label>کد تأیید (برای تغییر رمز)</label>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
                         <input type="text" id="verificationCode" placeholder="کد ۶ رقمی" maxlength="6" style="flex:1;">
-                        <button class="btn" id="sendCodeBtn" style="white-space: nowrap; padding: 0.6rem 1rem; opacity: 1; cursor: pointer;"><i class="fas fa-paper-plane"></i> ارسال کد</button>
+                        <button class="btn" id="sendCodeBtn" style="white-space:nowrap; padding:0.6rem 1rem;"><i class="fas fa-paper-plane"></i> ارسال کد</button>
                     </div>
-                    <p id="codeMsg" style="font-size: 0.8rem; margin-top: 0.3rem; color: rgb(94, 92, 85);">کد به ایمیل شما ارسال خواهد شد.</p>
+                    <p id="codeMsg" style="font-size:0.8rem; margin-top:0.3rem; color:var(--t2);">کد به ایمیل شما ارسال خواهد شد.</p>
                 </div>
                 <div class="form-group"><label>متن زیر نام</label><textarea id="newHeroLine" rows="3"></textarea></div>
                 <div class="form-group"><label>متن نقل قول</label><input type="text" id="newHeroQuote"></div>
@@ -626,7 +562,7 @@
         <div class="modal-box" style="max-width:550px;">
             <div class="modal-header">
                 <h3>افزودن شعر</h3>
-                <button class="modal-close" id="closePoemModal">×</button>
+                <button class="modal-close" id="closePoemModal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group"><label>عنوان</label><input type="text" id="poemTitle" placeholder="نام شعر..."></div>
@@ -639,10 +575,13 @@
 
     <script>
         (function() {
-            // ========================
-            // 1. پیکربندی اولیه
-            // ========================
             emailjs.init("CaGScIf9w-J6ii4SW");
+
+            // -------------------------------
+            // 0. ریست کامل وضعیت ادمین هنگام هر بار بارگذاری
+            // -------------------------------
+            localStorage.removeItem('is_poet_admin');
+            document.body.classList.remove('admin');
 
             const defaultSettings = {
                 username: "admin",
@@ -672,9 +611,6 @@
 
             let poems = JSON.parse(localStorage.getItem('poetPoems')) || defaultPoems;
 
-            // ========================
-            // 2. توابع کمکی
-            // ========================
             const STORAGE_FAIL = "pfail", STORAGE_TIME = "pftime";
             function getLockMinutes() {
                 const fails = parseInt(localStorage.getItem(STORAGE_FAIL)||'0');
@@ -698,9 +634,6 @@
                 showPoems();
             }
 
-            // ========================
-            // 3. منو
-            // ========================
             const hamburger = document.getElementById('hamburger');
             const navLinks = document.getElementById('navLinks');
             const overlay = document.getElementById('overlay');
@@ -716,9 +649,6 @@
                 if (navLinks.classList.contains('on')) toggleMenu();
             });
 
-            // ========================
-            // 4. نمایش اطلاعات
-            // ========================
             function updateInfoDisplay() {
                 document.getElementById('heroLine').textContent = settings.heroLine || '';
                 document.getElementById('heroQuote').textContent = settings.heroQuote || '';
@@ -732,9 +662,6 @@
             }
             updateInfoDisplay();
 
-            // ========================
-            // 5. اشعار
-            // ========================
             const grid = document.getElementById('poemsGrid');
             const poemViewModal = document.getElementById('poemViewModal');
             const viewTitle = document.getElementById('viewTitle');
@@ -811,9 +738,6 @@
                 document.getElementById('poemModal').classList.remove('on');
             };
 
-            // ========================
-            // 6. ورود
-            // ========================
             document.getElementById('adminLink').onclick = (e) => {
                 e.preventDefault();
                 document.getElementById('loginErr').style.display = 'none';
@@ -844,9 +768,6 @@
                 }
             };
 
-            // ========================
-            // 7. چشم رمز
-            // ========================
             const toggleLoginPasswordBtn = document.getElementById('toggleLoginPasswordBtn');
             const loginPasswordInput = document.getElementById('loginPass');
             toggleLoginPasswordBtn.addEventListener('click', () => {
@@ -863,9 +784,6 @@
                 togglePasswordBtn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
             });
 
-            // ========================
-            // 8. کد تأیید
-            // ========================
             let currentVerificationCode = null;
             let codeSentTime = null;
             let countdownInterval = null;
@@ -915,9 +833,6 @@
                     });
             });
 
-            // ========================
-            // 9. تنظیمات
-            // ========================
             document.getElementById('settingsLink').onclick = (e) => {
                 e.preventDefault();
                 if (!isAdmin()) return;
@@ -972,9 +887,6 @@
                 document.getElementById('settingsModal').classList.remove('on');
             };
 
-            // ========================
-            // 10. انتشار مستقیم به گیت‌هاب
-            // ========================
             document.getElementById('publishToGithubBtn').addEventListener('click', async () => {
                 const token = localStorage.getItem('github_token');
                 if (!token) return alert('لطفاً ابتدا توکن گیت‌هاب را در تنظیمات وارد کنید.');
@@ -984,17 +896,18 @@
                 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/index.html`;
 
                 try {
-                    // خواندن کل محتوای فعلی صفحه (که شامل اشعار و تنظیمات است)
+                    // قبل از انتشار، وضعیت ادمین را در localStorage پاک کن
+                    localStorage.removeItem('is_poet_admin');
+                    document.body.classList.remove('admin');
+
                     const fullHTML = document.documentElement.outerHTML;
                     const contentBase64 = btoa(unescape(encodeURIComponent(fullHTML)));
 
-                    // دریافت SHA فایل فعلی
                     const getRes = await fetch(apiUrl, { headers: { Authorization: `token ${token}` } });
                     if (!getRes.ok) throw new Error('دریافت اطلاعات فایل فعلی ممکن نشد.');
                     const fileData = await getRes.json();
                     const sha = fileData.sha;
 
-                    // آپلود فایل جدید
                     const putRes = await fetch(apiUrl, {
                         method: 'PUT',
                         headers: {
@@ -1011,6 +924,11 @@
                     if (putRes.ok) {
                         document.getElementById('publishStatus').textContent = '✅ سایت با موفقیت بروز شد.';
                         document.getElementById('publishStatus').style.color = '#2c2b28';
+                        // خروج از تنظیمات و رفرش کامل
+                        setTimeout(() => {
+                            document.getElementById('settingsModal').classList.remove('on');
+                            location.href = 'https://moeinsaraei.github.io';
+                        }, 2000);
                     } else {
                         const err = await putRes.json();
                         throw new Error(err.message || 'خطا در انتشار');
@@ -1021,21 +939,13 @@
                 }
             });
 
-            // ========================
-            // 11. خروج
-            // ========================
             document.getElementById('logoutLink').onclick = (e) => {
                 e.preventDefault();
                 if (confirm('خروج؟')) setAdmin(false);
             };
 
-            // ========================
-            // 12. راه‌اندازی نهایی
-            // ========================
-            if (isAdmin()) document.body.classList.add('admin');
             showPoems();
 
-            // پیغام تشکر
             const params = new URLSearchParams(window.location.search);
             if (params.get('sent') === '1') {
                 document.getElementById('thanksOverlay').classList.add('on');
@@ -1048,7 +958,6 @@
                 document.getElementById('thanksOverlay').classList.remove('on');
             });
 
-            // اسکرول
             window.addEventListener('scroll', () => {
                 const scroll = window.scrollY + 120;
                 document.querySelectorAll('section[id]').forEach(s => {
@@ -1057,12 +966,11 @@
                 });
             });
 
-            // reveal
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
             }, { threshold: 0.2 });
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         })();
     </script>
-
-</body></html>
+</body>
+</html>
